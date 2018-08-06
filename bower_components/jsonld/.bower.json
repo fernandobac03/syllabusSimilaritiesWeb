@@ -1,0 +1,29 @@
+{
+  "name": "jsonld",
+  "version": "0.3.26",
+  "description": "A JSON-LD Processor and API implementation in JavaScript.",
+  "authors": [
+    "Digital Bazaar, Inc."
+  ],
+  "license": "BSD",
+  "main": [
+    "js/jsonld.js"
+  ],
+  "dependencies": {
+    "es6-promise": "~2.0.0"
+  },
+  "ignore": [
+    "node_modules",
+    "bower_components"
+  ],
+  "homepage": "https://github.com/digitalbazaar/jsonld.js",
+  "_release": "0.3.26",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.3.26",
+    "commit": "e8eb6d3d8393385f2def4c3f70cc13261118c695"
+  },
+  "_source": "https://github.com/digitalbazaar/jsonld.js.git",
+  "_target": "~0.3.x",
+  "_originalSource": "jsonld"
+}

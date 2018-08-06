@@ -1,0 +1,57 @@
+<div class="col-md-12" ng-controller="translate" style="padding-top: 5%">
+    <div class="authorssources" >
+        <h3 class="source text-success">{{'Authors Sources'| translate}}</h3>
+        <br/>
+        <p class="source">
+            Los datos de los autores provienen de la plataforma DSPACE de cada una de las Universidades
+            miembros de CEDIA. En un proceso previo, el grupo de repositorios con el proyecto "Aplicación 
+            de Linked Open Data a Repositorios CEDIA", realizó el trabajo de transformar la información
+            de DSPACE a formato RDF siguiendo las normas y principios de Linked Data. Uno de
+            los resultados de este proyecto fue la generacion de repositorios RDF de cada una de las
+            fuentes analizadas. En este proyecto, para extraer la información de autores, se accede a
+            los repositorios RDF antes mencionados a través del servicio SPARQL ENDPOINT de cada una de las fuentes.
+        </p>
+
+        <br/>
+        <center>
+            <table ng-controller="listSources" class="authors source">
+                <tr style="background-color: #d6e9c6">
+                    <td>IES</td>
+                    <td>NOMBRE COMPLETO</td>
+                    <td>URL</td>
+                    <td>CIUDAD</td>
+                </tr>
+                <tr ng-repeat="source in sources">
+                    <td><a href="{{ source.url}}" target="blank">{{ source.name}}</a></td>
+                    <td>{{ source.fullName}}</td>
+                    <td><a href="{{ source.url}}" target="blank">{{ source.url}}</a></td>
+                    <td>{{ source.city}}</td>
+                </tr>
+            </table>
+        </center>
+    </div>
+
+    <hr>
+
+    <div class="publicationssources"> 
+        <h3 class="source text-success" >{{'Publications Data Source'| translate}}</h3>
+
+
+        <br/>
+        <p class="source">
+            La información de las publicaciones de los autores se extrae desde diferentes fuentes
+            de datos. Una fuente de datos de publicaciones es una interfaz que expone datos acerca de
+            artículos (incluyendo los autores, abstracts, keywords, citas, etc.) indexada en dicha fuente. 
+
+        </p>
+
+        <br/>
+
+
+    </div>
+    <hr>
+</div>
+
+<hr>
+
+<div class='col-md-12' ng-include="'/wkhome/partials/footnote.html'"/>
