@@ -9,7 +9,7 @@ var similitudServices = angular.module('similitudServices', ['ngResource']);
 //wkhomeServices.serverInstance = 'http://190.15.141.85:80';
 //wkhomeServices.serverInstance = 'http://localhost:8080/marmotta';
 //for parliament triplestore test
-similitudServices.serverInstance = 'http://172.17.0.3:8089/parliament';
+similitudServices.serverInstance = 'http://172.17.0.2:8089/parliament';
 
 
 /* Sample of a RESTful client Service */
@@ -50,7 +50,7 @@ similitudServices.factory('sparqlQuery', ['$resource', '$http', '$window',
         var serverInstance = similitudServices.serverInstance ? similitudServices.serverInstance :
                 //'http://' + $window.location.hostname + ($window.location.port ? ':8080' : '') + '/marmotta';
                 'http://' + $window.location.hostname + ($window.location.port ? ':8080' : '') + '';
-        return $resource(serverInstance + '/sparql/', {}, {
+        return $resource(serverInstance + '/sparql', {}, {
            querySrv: {method: 'POST', isArray: true, transformRequest: transform, headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
          });
     }]);

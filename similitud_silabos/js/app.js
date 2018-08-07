@@ -14,7 +14,11 @@ var similitudApp = angular.module('similitudApp', [
 ]);
 
 
-
+similitudApp.service('temporalData', function(){
+    this.selectedSyllabusA = null;
+    this.selectedSyllabusB = null;
+    
+});
 similitudApp.service('searchData', function () {
     this.authorSearch = null;
     this.areaSearch = null;

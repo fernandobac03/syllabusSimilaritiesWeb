@@ -3,7 +3,7 @@
 <hr>
 <hr>
 <div ng-controller="exportController">
-    <div ng-controller="loadSyllabus">
+    <div >
 
         <div class="col-md-12">
 
@@ -13,7 +13,7 @@
                 </div>
             </center>
         </div>
-        <div class="col-md-12" >
+        <div class="col-md-12" ng-controller="loadSyllabusA" >
             <h3 class="text-info" style="text-align: left">{{'silaboA'| translate}}:</h3>
            
             <div class="col-md-3">
@@ -25,7 +25,7 @@
 
             <div class="col-md-3">
                 <h3 class="text-success" style="text-align: left">{{'dependencia'| translate}}:</h3>
-                <select   class="form-control" name="group" id="group" ng-model="gbselectedItem" ng-options="key.depenID as key.depenNAME for key in dependenciasFinal" >
+                <select   class="form-control" name="group" id="group" ng-model="selectedDependencia" ng-options="key.depenID as key.depenNAME for key in dependenciasFinal" >
                     <option value="">Seleccione</option>
                     <!--            <option value="name">Autor</option> -->
                 </select>
@@ -33,12 +33,49 @@
 
             <div class="col-md-3">
                 <h3 class="text-success" style="text-align: left">{{'silabo'| translate}}:</h3>
-                <select   class="form-control" name="groupb" id="group" ng-model="silaboselectedItem" >
-                    <option value="">seleccione</option>
+                <select   class="form-control" name="groupb" id="group" ng-model="selectedSilabo" ng-options="key.silaboID as key.silaboNAME for key in silabosFinal" >
+                    <option value="">Seleccione</option>
+                </select>
+            </div>
+        </div> <!--fin Seelección de silabo A-->
+        <hr>
+        <hr>
+        <!--Selección de silabo B-->
+        <div class="col-md-12" ng-controller="loadSyllabusA" >
+            <h3 class="text-info" style="text-align: left">{{'silaboB'| translate}}:</h3>
+           
+            <div class="col-md-3">
+               <h3 class="text-success" style="text-align: left">{{'seleccioneInstitucion'| translate}}:</h3>
+                <select class="form-control" name="board" id="board" ng-model="selectedInstitution"  ng-options="key.instID as key.instNAME for key  in institutionsFinal">
+                    <option value="">Seleccione</option>
                 </select>
             </div>
 
+            <div class="col-md-3">
+                <h3 class="text-success" style="text-align: left">{{'dependencia'| translate}}:</h3>
+                <select   class="form-control" name="group" id="group" ng-model="selectedDependencia" ng-options="key.depenID as key.depenNAME for key in dependenciasFinal" >
+                    <option value="">Seleccione</option>
+                    <!--            <option value="name">Autor</option> -->
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <h3 class="text-success" style="text-align: left">{{'silabo'| translate}}:</h3>
+                <select   class="form-control" name="groupb" id="group" ng-model="selectedSilabo" ng-options="key.silaboID as key.silaboNAME for key in silabosFinal" >
+                    <option value="">Seleccione</option>
+                </select>
+            </div>
+        </div> <!--fin Seelección de silabo B-->
+        
             
+        <div class="col-md-12" style="text-align: center; padding: 5%" ng-controller="calcSimilarity">
+           <button type="button" class="btn btn-primary" ng-click="ifClick('dss')">Calcular Similitud</button>
+           <label>{{similitudFinal}}</label>
+            
+        </div>
+        
+        
+            <div class="col-md-12" >
             <cloud-group data="data" style="display: block; height: 90% ; width: 80%" if-click="ifClick(value)" ng-model="value"></cloud-group> 
             <!--
                 <div class="col-md-3">
