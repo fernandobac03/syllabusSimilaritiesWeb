@@ -1,132 +1,64 @@
 
-similitudControllers.controller('loadSyllabusB', ['$translate', '$routeParams', '$scope', 'globalData', 'sparqlQuery', 'searchData', '$route', '$window',
+similitudControllers.controller('loadSyllabusB', ['$translate', '$routeParams', '$scope', 'temporalData', 'globalData', 'sparqlQuery', 'searchData', '$route', '$window',
     function ($translate, $routeParams, $scope, temporalData, globalData, sparqlQuery, searchData, $route, $window) {
         $translate.use($routeParams.lang);
-        var selected = null;
-        $scope.ifClick = function (value)
-        {
-            //selected = value; //searchData.genericData = value;
-            $scope.todos = [];
-            var model = {};
-            _.map(value, function (pub) {
 
-                model["id"] = pub["@id"];
-                model["title"] = pub["dct:title"];
-                model["abstract"] = pub["bibo:abstract"] ? pub["bibo:abstract"] : "";
-                model["uri"] = pub["bibo:uri"] ? pub["bibo:uri"]["@id"] : "";
-                model["keywords"] = pub["bibo:Quote"] ? pub["bibo:Quote"] : "";
 
-                $scope.todos.push({id: model["id"], title: model["title"], abstract: model["abstract"], uri: model["uri"], keywords: model["keywords"]});
+        $scope.themes = [];
+        $scope.institutions = [];
+        //waitingDialog.show();
+        executeLoadInstitutions();
+        function executeLoadInstitutions() {
 
-            });
-            $scope.data = {schema: {"context": globalData.CONTEXT, fields: ["rdfs:label", "uc:total"]}, data: value};
-            $scope.loadData();
-            if ($scope.todos[0]) {
-                $scope.searchAuthor($scope.todos[0]);
-            }
-            //$window.location.hash = '/' + $routeParams.lang + "/w/publication";
-            $('html,body').animate({
-                scrollTop: $("#scrollToHere").offset().top
-            }, "slow");
-        };
+            //Esta Query no funciona si solo se tiene una institución en el repositorio,
+            // es por eso que por el momento se le colocará manualmente el ID y LABEL de la unica institución existente
+            var queryInstitutions = globalData.PREFIX
 
-        $('html,body').animate({
-            scrollTop: $("#scrollToTop").offset().top
-        }, "slow");
-        $scope.$watch('searchData.areaSearch', function (newValue, oldValue, scope) {
+                    + ' CONSTRUCT {?o rdfs:label  "Universidad de Cuenca" }'
+                    + ' WHERE {'
+                    //+ '     SELECT DISTINCT ?o  (str(?o) as ?label)'
+                    + '     SELECT DISTINCT ?o  '
+                    + '         WHERE {'
+                    //+ '             ?s <http://ies.linkeddata.ec/vocabulary#has_similarity> ?o'
+                    + '             ?s <http://ies.linkeddata.ec/vocabulary#is_faculty_of> ?o'
+                    + '         } '
+                    + ' }';
 
-            if (searchData.areaSearch) {
-                var areaSearch = searchData.areaSearch["@graph"];
-                if (areaSearch) {
-                    //    if (authorSearch.length > 1) {
-                    var candidates = _.map(areaSearch, function (area) {
-                        var model = {};
-                        //var keys = Object.keys(author);
-                        model["id"] = area["@id"];
-                        model["label"] = area["rdfs:label"];
-                        return model;
-                    });
-                    $scope.candidates = candidates;
-                    $scope.selectedAuthor = function ($event, label) {
-                        $('#searchResults').modal('hide');
-                        searchData.researchArea = label;
-                        $scope.selectedItem = label;
-                    };
-                    waitingDialog.hide();
-                    $('#searchResults').modal('show');
-                }//End if(authorSearch)
-                else
-                {
-                    alert("Information not found");
-                    $window.location.hash = "/";
-                    waitingDialog.hide();
-                }
-
-            }
-
-        }, true);
-        if (!searchData.allInstitutions)
-        {
-            $scope.themes = [];
-            $scope.institutions = [];
-            //waitingDialog.show();
-            executeLoadInstitutions();
-            function executeLoadInstitutions() {
-
-                //Esta Query no funciona si solo se tiene una institución en el repositorio,
-                // es por eso que por el momento se le colocará manualmente el ID y LABEL de la unica institución existente
-                var queryInstitutions = globalData.PREFIX
-
-                        + ' CONSTRUCT {?o rdfs:label  "Universidad de Cuenca" }'
-                        + ' WHERE {'
-                        //+ '     SELECT DISTINCT ?o  (str(?o) as ?label)'
-                        + '     SELECT DISTINCT ?o  '
-                        + '         WHERE {'
-                        //+ '             ?s <http://ies.linkeddata.ec/vocabulary#has_similarity> ?o'
-                        + '             ?s <http://ies.linkeddata.ec/vocabulary#is_faculty_of> ?o'
-                        + '         } '
-                        + ' }';
-
-                sparqlQuery.querySrv({query: queryInstitutions}, function (rdf) {
-                    //   waitingDialog.show();
-                    jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
-                        if (compacted["@graph"])
-                        {
-                            _.map(compacted["@graph"], function (pub) {
-                                var model = {};
-                                model["id"] = pub["@id"];
-                                model["name"] = pub["rdfs:label"];
-                                $scope.institutions.push({instID: model["id"], instNAME: model["name"]});
-                            });
-                            applyvalues();
-                            waitingDialog.hide();
-                        } else
-                        {
+            sparqlQuery.querySrv({query: queryInstitutions}, function (rdf) {
+                //   waitingDialog.show();
+                jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
+                    if (compacted["@graph"])
+                    {
+                        _.map(compacted["@graph"], function (pub) {
                             var model = {};
-                            model["id"] = "http://ies.linkeddata.ec/institution/institution_Universidad%20de%20Cuenca";
-                            model["name"] = "Universidad de Cuenca";
+                            model["id"] = pub["@id"];
+                            model["name"] = pub["rdfs:label"];
                             $scope.institutions.push({instID: model["id"], instNAME: model["name"]});
-                            applyvaluesInstitutions();
-                            //alert("No se han recuperado Instituciones");
-                            waitingDialog.hide();
-                        }
-                    });
+                        });
+                        applyvalues();
+                        waitingDialog.hide();
+                    } else
+                    {
+                        var model = {};
+                        model["id"] = "http://ies.linkeddata.ec/institution/institution_Universidad%20de%20Cuenca";
+                        model["name"] = "Universidad de Cuenca";
+                        $scope.institutions.push({instID: model["id"], instNAME: model["name"]});
+                        applyvaluesInstitutions();
+                        //alert("No se han recuperado Instituciones");
+                        waitingDialog.hide();
+                    }
                 });
-            }
+            });
+        }
 
-            function applyvaluesInstitutions() {
-                $scope.$apply(function () {
-                    $scope.institutionsFinal = $scope.institutions;
-                    $scope.selectedItem = searchData.researchArea; // Selected Research Area Filter Default
-                    searchData.allkeywords = $scope.institutions;
-                });
-            }
-            ;
-        } else
-        {
-            $scope.relatedthemes = searchData.allkeywords;
-            $scope.selectedItem = searchData.researchArea;
-        } //  end  if (!searchData.allkeywords)
+        function applyvaluesInstitutions() {
+            $scope.$apply(function () {
+                $scope.institutionsFinal = $scope.institutions;
+                $scope.selectedItem = searchData.researchArea; // Selected Research Area Filter Default
+                searchData.allkeywords = $scope.institutions;
+            });
+        }
+        ;
 
 
 
@@ -134,14 +66,16 @@ similitudControllers.controller('loadSyllabusB', ['$translate', '$routeParams', 
         $scope.$watch('selectedInstitution', function () {//Funcion para cuando se selecciona la Research Area
             loadDependencias($scope.selectedInstitution); //query and load resource related with selected theme
         });
-        
+
         //Para saber cuando el usuario seleccione la dependencia.
         $scope.$watch('selectedDependencia', function () {
             loadSilabos($scope.selectedInstitution, $scope.selectedDependencia)
         });
-        
-        
-   
+
+        $scope.$watch('selectedSilabo', function () {//Funcion para cuando selecciona el filtro para agrupar
+            temporalData.selectedSyllabusB = $scope.selectedSilabo;
+        });
+
         function loadDependencias(institution)
         {
             var queryDependencias = globalData.PREFIX
@@ -161,7 +95,7 @@ similitudControllers.controller('loadSyllabusB', ['$translate', '$routeParams', 
                             var model = {};
                             //model["Publication"] = pub["foaf:publications"]["@id"];
                             model["dependencia"] = pub["@id"];
-                            model["name"] = pub["rdfs:label"];                       
+                            model["name"] = pub["rdfs:label"];
                             $scope.listadodependencias.push({depenID: model["dependencia"], depenNAME: model["name"]});
                         });
                         applyvaluesDependencias();
@@ -174,20 +108,20 @@ similitudControllers.controller('loadSyllabusB', ['$translate', '$routeParams', 
                 }); //end jsonld.compact
             }); //end sparqlService
         }//end loadDependencias
-        
+
         function applyvaluesDependencias() {
-                $scope.$apply(function () {
-                    $scope.dependenciasFinal = $scope.listadodependencias;
-                 });
+            $scope.$apply(function () {
+                $scope.dependenciasFinal = $scope.listadodependencias;
+            });
         }
-            
-        function loadSilabos(institucion, dependencia){
+
+        function loadSilabos(institucion, dependencia) {
             var queryDependencias = globalData.PREFIX
                     + 'CONSTRUCT { ?silabo rdfs:label ?title }'
                     + ' WHERE { '
                     + '     SELECT DISTINCT ?silabo ?title WHERE {  '
-                    + '         ?silabo 	<http://ies.linkeddata.ec/vocabulary#belonging_to> <'+dependencia+'>.  '
-                    + '         <'+dependencia+'> <http://ies.linkeddata.ec/vocabulary#is_faculty_of> <'+institucion+'>. '
+                    + '         ?silabo 	<http://ies.linkeddata.ec/vocabulary#belonging_to> <' + dependencia + '>.  '
+                    + '         <' + dependencia + '> <http://ies.linkeddata.ec/vocabulary#is_faculty_of> <' + institucion + '>. '
                     + '         ?silabo <http://ies.linkeddata.ec/vocabulary#abarca> ?subject. '
                     + '         ?subject a <http://purl.org/vocab/aiiso/schema#Subject>. '
                     + '         ?subject <http://ies.linkeddata.ec/vocabulary#name> ?title '
@@ -202,7 +136,7 @@ similitudControllers.controller('loadSyllabusB', ['$translate', '$routeParams', 
                             var model = {};
                             //model["Publication"] = pub["foaf:publications"]["@id"];
                             model["silabo"] = pub["@id"];
-                            model["name"] = pub["rdfs:label"]["@value"];                       
+                            model["name"] = pub["rdfs:label"]["@value"];
                             $scope.listadoSilabos.push({silaboID: model["silabo"], silaboNAME: model["name"]});
                         });
                         applyvaluesSilabos();
@@ -214,16 +148,92 @@ similitudControllers.controller('loadSyllabusB', ['$translate', '$routeParams', 
                     }
                 }); //end jsonld.compact
             }); //end sparqlService
-       }// end loadSilabos
-       function applyvaluesSilabos() {
-                $scope.$apply(function () {
-                    $scope.silabosFinal = $scope.listadoSilabos;
-                 });
+        }// end loadSilabos
+        function applyvaluesSilabos() {
+            $scope.$apply(function () {
+                $scope.silabosFinal = $scope.listadoSilabos;
+            });
         }
-        
-        $scope.$watch('selectedSyllabus', function () {//Funcion para cuando selecciona el filtro para agrupar
-            temporalData.selectedSyllabusB = selectedSyllabus;
+
+
+        $scope.$watch('selectedSilabo', function () {
+            temporalData.selectedSyllabusB = $scope.selectedSilabo;
         });
-         
-       
+
+        $scope.buscandoSilabo = function ($event, texto) {
+            buscarSilabo(texto);
+
+        }
+        function buscarSilabo(texto) {
+            var querysearchSilabos = globalData.PREFIX
+                    + 'CONSTRUCT { ?silabo rdfs:label ?title. ?silabo ies:belonging_to ?dependencia. ?silabo ies:faculty ?labeldependencia. ?silabo ies:has_institution ?institucion.  ?silabo ies:institution ?labelinstitucion . }'
+                    + ' WHERE { '
+                    + '     SELECT DISTINCT ?silabo ?title ?dependencia ?institucion (str(?dependencia) as ?labeldependencia) (str(?institucion) as ?labelinstitucion) WHERE {   '
+                    + '         ?silabo      ies:belonging_to   ?dependencia. '
+                    + '         ?dependencia ies:is_faculty_of  ?institucion. '
+                    + '         ?silabo      ies:abarca         ?subject. '
+                    + '         ?subject     a                  aiiso:Subject.  '
+                    + '         ?subject     ies:name           ?title . '
+                    + '         FILTER REGEX(?title, "' + texto + '", "i") '
+                    + '     } '
+                    + ' } ';
+            $scope.silabosList = [];
+            sparqlQuery.querySrv({query: querysearchSilabos}, function (rdf) {
+                jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
+                    if (compacted["@graph"])
+                    {
+                        _.map(compacted["@graph"], function (silb) {
+                            var model = {};
+                            //model["Publication"] = pub["foaf:publications"]["@id"];
+                            model["silabo"] = silb["@id"];
+                            model["name"] = silb["rdfs:label"]["@value"];
+                            model["dependenciaID"] = silb["ies:belonging_to"]["@id"];
+                            model["dependencia"] = silb["ies:faculty"];
+                            model["institucionID"] = silb["ies:has_institution"]["@id"];
+                            model["institucion"] = silb["ies:institution"];
+                            $scope.silabosList.push({silaboID: model["silabo"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboDEPENDENCIAID: model["dependenciaID"], silaboINSTITUCION: model["institucion"], silaboINSTITUCIONID: model["institucionID"]});
+                        });
+                        applyvaluesSearchSilabos();
+                        waitingDialog.hide();
+                    } else//no retrieve data
+                    {
+                        //alert("No se han recuperado datos de las dependencias");
+                        waitingDialog.hide();
+                    }
+                }); //end jsonld.compact
+            }); //end sparqlService
+        }
+        ;//end buscarSilabo
+        function applyvaluesSearchSilabos() {
+            //$scope.$apply(function () {
+            $scope.silabos = $scope.silabosList;
+            //});
+        }
+
+        $scope.setSelectedSilabo = function ($event, searchSelectedSilabo, searchSelectedDependencia, searchSelectedInstitucion)
+        {
+            $('#searchDialog2').modal('hide');
+            $scope.tituloB = searchSelectedSilabo["silaboNAME"];
+            $scope.institucionB = searchSelectedSilabo["silaboINSTITUCION"];
+            $scope.dependenciaB = searchSelectedSilabo["silaboDEPENDENCIA"];
+            temporalData.selectedSyllabusB = searchSelectedSilabo["silaboID"];
+        };
+        $scope.searchDialog = function () {
+            $('#searchDialog2').modal('show');
+        };
+
+
+        $scope.safeApply = function (fn) {
+            var phase = this.$root.$$phase;
+            if (phase == '$apply' || phase == '$digest') {
+                if (fn && (typeof (fn) === 'function')) {
+                    fn();
+                }
+            } else {
+                this.$apply(fn);
+            }
+        };
+
+
+
     }]); //end groupTagsController 

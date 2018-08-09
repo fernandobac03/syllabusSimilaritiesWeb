@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/js/controllers/explorableTree.js</file>
+            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/js/app.js</file>
+            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/js/controllers/calcSimilarity.js</file>
+            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/partials/search.html</file>
+            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/js/controllers/loadSyllabusA.js</file>
+            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/js/controllers/loadSyllabusB.js</file>
+            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/partials/similitudRepo.html</file>
+            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/css/visuals/explorableTree.css</file>
+            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/css/visuals/similitudRepo.css</file>
+        </group>
+    </open-files>
 </project-private>

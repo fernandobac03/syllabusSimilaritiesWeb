@@ -102,6 +102,7 @@ myApp.labels_es = {
 ,"silaboB": "Sílabo B"
 ,"dependencia": "Seleccione la Dependencia"
 ,"silabo": "Seleccione el sílabo"
+,"buscarSilabo": "Buscar sílabo"
 //,"": ""
 
 };

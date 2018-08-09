@@ -17,6 +17,9 @@ var similitudApp = angular.module('similitudApp', [
 similitudApp.service('temporalData', function(){
     this.selectedSyllabusA = null;
     this.selectedSyllabusB = null;
+
+    this.selectedDependencia = "";
+    this.selectedInstitucion = "";
     
 });
 similitudApp.service('searchData', function () {
@@ -44,6 +47,8 @@ similitudApp.service('globalData', function () {
             + ' PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> '
             + ' PREFIX uc: <http://ucuenca.edu.ec/ontology#>  '
             + ' PREFIX mm: <http://marmotta.apache.org/vocabulary/sparql-functions#> '
+            + ' PREFIX ies: <http://ies.linkeddata.ec/vocabulary#> '
+            + ' PREFIX aiiso: <http://purl.org/vocab/aiiso/schema#> '
             ;
     this.CONTEXT = {
         "uc": "http://ucuenca.edu.ec/ontology#",
@@ -52,6 +57,8 @@ similitudApp.service('globalData', function () {
         "bibo": "http://purl.org/ontology/bibo/",
         "dc": "http://purl.org/dc/elements/1.1/",
         "dct": "http://purl.org/dc/terms/",
+        "ies": "http://ies.linkeddata.ec/vocabulary#", 
+        "aiiso": "http://purl.org/vocab/aiiso/schema#",
     };
     
     this.urltofindinGOOGLE = 'https://scholar.google.com/scholar?q={0}';

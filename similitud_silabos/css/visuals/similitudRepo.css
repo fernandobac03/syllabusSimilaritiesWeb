@@ -1,0 +1,14 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 08/08/2018, 22:58:26
+    Author     : ucuenca
+*/
+
+    #tablasearchDialog tr:hover {
+      background-color: #f7e1b5;
+      cursor: pointer;
+    }
