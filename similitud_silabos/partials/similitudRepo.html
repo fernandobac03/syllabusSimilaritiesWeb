@@ -30,7 +30,7 @@
                             <div class="modal-body" id="author-select">
                                 <div class="col-md-12">
                                     <div class="col-md-3">
-                                        <input ng-model="searchText" ng-change="buscandoSilabo($event, searchText, 1)" placeholder="{{'buscarSilabo'| translate}}" />
+                                        <input ng-model="searchText" ng-change="buscandoSilabo($event, searchText)" placeholder="{{'buscarSilabo'| translate}}" />
                                     </div>
                                     <!--<div class="col-md-3">
                                         <h3 class="text-success" style="text-align: left">{{'seleccioneInstitucion'| translate}}:</h3>
@@ -98,15 +98,23 @@
                     <tbody>
                         <tr>
                             <td>Titulo</td>
-                            <td><input style="width: 100%" type="text" value="{{tituloA}}"></td>
+                            <td><input style="width: 100%" type="text" value="{{silabotoShow['silaboNAME']}}"></td>
+                        </tr>
+                        <tr>
+                            <td>Descripción</td>
+                            <td><textarea class="form-control" rows="4" id="comment">{{silabotoShow['silaboDESCRIPCION']}}</textarea></td>
+                        </tr>
+                        <tr>
+                            <td>Objetivos</td>
+                            <td><div style="overflow: auto; height: 80px"><li ng-repeat="objetivo in silabotoShow['silaboOBJETIVO']"> - {{objetivo['@value']}}</li></div></td>
                         </tr>
                         <tr>
                             <td>Institución</td>
-                            <td><input style="width: 100%" type="text" value="{{institucionA}}"></td>
+                            <td><input style="width: 100%" type="text" value="{{silabotoShow['silaboINSTITUCION']}}"></td>
                         </tr>
                         <tr>
                             <td>Dependencia</td>
-                            <td><input style="width: 100%" type="text" value="{{dependenciaA}}"></td>
+                            <td><input style="width: 100%" type="text" value="{{silabotoShow['silaboDEPENDENCIA']}}"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -199,15 +207,23 @@
                     <tbody>
                         <tr>
                             <td>Titulo</td>
-                            <td><input style="width: 100%" type="text" value="{{tituloB}}"></td>
+                            <td><input style="width: 100%" type="text" value="{{silabotoShow['silaboNAME']}}"></td>
+                        </tr>
+                        <tr>
+                            <td>Descripción</td>
+                            <td><textarea class="form-control" rows="5" id="comment">{{silabotoShow['silaboDESCRIPCION']}}</textarea></td>
+                        </tr>
+                        <tr>
+                            <td>Objetivos</td>
+                            <td><div style="overflow: auto; height: 80px"><li ng-repeat="objetivo in silabotoShow['silaboOBJETIVO']"> - {{objetivo['@value']}}</li></div></td>
                         </tr>
                         <tr>
                             <td>Institución</td>
-                            <td><input style="width: 100%" type="text" value="{{institucionB}}"></td>
+                            <td><input style="width: 100%" type="text" value="{{silabotoShow['silaboINSTITUCION']}}"></td>
                         </tr>
                         <tr>
                             <td>Dependencia</td>
-                            <td><input style="width: 100%" type="text" value="{{dependenciaB}}"></td>
+                            <td><input style="width: 100%" type="text" value="{{silabotoShow['silaboDEPENDENCIA']}}"></td>
                         </tr>
                     </tbody>
                 </table>

@@ -14,13 +14,14 @@ similitudControllers.controller('loadSyllabusA', ['$translate', '$routeParams', 
             // es por eso que por el momento se le colocará manualmente el ID y LABEL de la unica institución existente
             var queryInstitutions = globalData.PREFIX
 
-                    + ' CONSTRUCT {?o rdfs:label  "Universidad de Cuenca" }'
+                    + ' CONSTRUCT {?institucion rdfs:label  ?nameinstitucion }'
                     + ' WHERE {'
                     //+ '     SELECT DISTINCT ?o  (str(?o) as ?label)'
-                    + '     SELECT DISTINCT ?o  '
+                    + '     SELECT DISTINCT ?institucion ?nameinstitucion  '
                     + '         WHERE {'
                     //+ '             ?s <http://ies.linkeddata.ec/vocabulary#has_similarity> ?o'
-                    + '             ?s <http://ies.linkeddata.ec/vocabulary#is_faculty_of> ?o'
+                    + '             ?institucion a <http://purl.org/vocab/aiiso/schema#Institution> .'
+                    + '             ?institucion rdfs:label ?nameinstitucion'
                     + '         } '
                     + ' }';
 
@@ -182,35 +183,48 @@ similitudControllers.controller('loadSyllabusA', ['$translate', '$routeParams', 
 
 
         //Para saber cuando el usuario seleccione la dependencia.
-        $scope.$watch('searchText', function () {
-           buscarSilabo($scope.searchText);
-        });
+        //$scope.$watch('searchText', function () {
+        //   buscarSilabo($scope.searchText);
+        //});
+
 
         $scope.buscandoSilabo = function ($event, texto) {
+        //$scope.$watch('searchText', function () {
 
-            buscarSilabo(texto);
-
-        }
-        function buscarSilabo(texto) {
-
-            var institucionFilter = temporalData.selectedInstitucion ? temporalData.selectedInstitucion : "";
-            var dependenciaFilter = temporalData.selectedDependencia ? temporalData.selectedDependencia : "";
-            var querysearchSilabos = globalData.PREFIX
-                    + 'CONSTRUCT { ?silabo rdfs:label ?title. ?silabo ies:belonging_to ?dependencia. ?silabo ies:faculty ?labeldependencia. ?silabo ies:has_institution ?institucion.  ?silabo ies:institution ?labelinstitucion . }'
+            var query = globalData.PREFIX
+                    + 'CONSTRUCT { '
+                    + '                 ?silabo rdfs:label ?title. '
+                    + '                 ?silabo aiiso:description ?descripcion. '
+                    + '                 ?silabo ies:objective      ?objetivo. '
+                    + '                 ?silabo ies:belonging_to ?dependencia. '
+                    + '                 ?silabo ies:faculty ?nameDependencia. '
+                    + '                 ?silabo ies:has_institution ?institucion. '
+                    + '                 ?silabo ies:institution ?nameInstitucion . '
+                    + '  }'
                     + ' WHERE { '
-                    + '     SELECT DISTINCT ?silabo ?title ?dependencia ?institucion (str(?dependencia) as ?labeldependencia) (str(?institucion) as ?labelinstitucion) WHERE {   '
+                    + '     SELECT DISTINCT ?silabo ?title ?objetivo ?descripcion ?dependencia ?institucion ?nameDependencia ?nameInstitucion WHERE {   '
+                    + '         ?silabo      aiiso:description ?descripcion. '
+                    + '         ?silabo      ies:objective      ?objetivo. '
                     + '         ?silabo      ies:belonging_to   ?dependencia. '
+                    + '         ?dependencia rdfs:label         ?nameDependencia. '
                     + '         ?dependencia ies:is_faculty_of  ?institucion. '
+                    + '         ?institucion rdfs:label         ?nameInstitucion. '
                     + '         ?silabo      ies:abarca         ?subject. '
                     + '         ?subject     a                  aiiso:Subject.  '
                     + '         ?subject     ies:name           ?title . '
-                    + '         FILTER REGEX(?title, "' + texto + '", "i") '
-                    + '         FILTER REGEX(str(?dependencia), "' + dependenciaFilter + '", "i") '
-                    + '         FILTER REGEX(str(?institucion), "' + institucionFilter + '", "i") '
-                    + '     } '
+                    + '         FILTER REGEX(str(?title), "'+$scope.searchText+'", "i") '
+                    //       + '         FILTER REGEX(str(?dependencia), "' + dependenciaFilter + '", "i") '
+                    //       + '         FILTER REGEX(str(?institucion), "' + institucionFilter + '", "i") '
+                    + '     } limit 100 '
                     + ' } ';
+
+
+
+            var institucionFilter = temporalData.selectedInstitucion ? temporalData.selectedInstitucion : "";
+            var dependenciaFilter = temporalData.selectedDependencia ? temporalData.selectedDependencia : "";
+            //var buildquery = String.format(query, $scope.searchText);
             $scope.silabosList = [];
-            sparqlQuery.querySrv({query: querysearchSilabos}, function (rdf) {
+            sparqlQuery.querySrv({query: query}, function (rdf) {
                 jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
                     if (compacted["@graph"])
                     {
@@ -219,11 +233,14 @@ similitudControllers.controller('loadSyllabusA', ['$translate', '$routeParams', 
                             //model["Publication"] = pub["foaf:publications"]["@id"];
                             model["silabo"] = silb["@id"];
                             model["name"] = silb["rdfs:label"]["@value"];
+                            model["description"] = silb["aiiso:description"]["@value"];
+                            model["objective"] = silb["ies:objective"]
                             model["dependenciaID"] = silb["ies:belonging_to"]["@id"];
-                            model["dependencia"] = silb["ies:faculty"];
+                            model["dependencia"] = silb["ies:faculty"]["@value"];
                             model["institucionID"] = silb["ies:has_institution"]["@id"];
-                            model["institucion"] = silb["ies:institution"];
-                            $scope.silabosList.push({silaboID: model["silabo"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboDEPENDENCIAID: model["dependenciaID"], silaboINSTITUCION: model["institucion"], silaboINSTITUCIONID: model["institucionID"]});
+                            model["institucion"] = silb["ies:institution"]["@value"];
+                            model["objective"] = silb["ies:objective"]
+                            $scope.silabosList.push({silaboID: model["silabo"], silaboOBJETIVO: model["objective"], silaboDESCRIPCION: model["description"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboDEPENDENCIAID: model["dependenciaID"], silaboINSTITUCION: model["institucion"], silaboINSTITUCIONID: model["institucionID"]});
                         });
                         applyvaluesSearchSilabos();
                         waitingDialog.hide();
@@ -235,30 +252,29 @@ similitudControllers.controller('loadSyllabusA', ['$translate', '$routeParams', 
                 }); //end jsonld.compact
             }); //end sparqlService
         }
+        //)
         ;//end buscarSilabo
         function applyvaluesSearchSilabos() {
-            //$scope.$apply(function () {
+           $scope.$apply(function () {
             $scope.silabos = $scope.silabosList;
-            //});
+            });
         }
 
-        $scope.setSelectedSilabo = function ($event, searchSelectedSilabo, searchSelectedDependencia, searchSelectedInstitucion)
+        $scope.setSelectedSilabo = function ($event, setSelectedSilabo)
         {
-          
-                $('#searchDialog').modal('hide');
-                $scope.tituloA = searchSelectedSilabo["silaboNAME"];
-                $scope.institucionA = searchSelectedSilabo["silaboINSTITUCION"];
-                $scope.dependenciaA = searchSelectedSilabo["silaboDEPENDENCIA"];
-                temporalData.selectedSyllabusA = searchSelectedSilabo["silaboID"];
-                
-                
-               // loadDependencias(searchSelectedInstitucion);
-                //loadSilabos(searchSelectedInstitucion, searchSelectedDependencia);
-                //$scope.selectedInstitucion = searchSelectedInstitucion;
-                //document.getElementById('institutionA').options.selectedItem = searchSelectedInstitucion;
-                //$scope.selectedDependencia = searchSelectedDependencia;
-                //$scope.selectedSilabo = searchSelectedSilabo;
-           
+
+            $('#searchDialog').modal('hide');
+            $scope.silabotoShow = setSelectedSilabo;
+            temporalData.selectedSyllabusA = setSelectedSilabo["silaboID"];
+
+
+            // loadDependencias(searchSelectedInstitucion);
+            //loadSilabos(searchSelectedInstitucion, searchSelectedDependencia);
+            //$scope.selectedInstitucion = searchSelectedInstitucion;
+            //document.getElementById('institutionA').options.selectedItem = searchSelectedInstitucion;
+            //$scope.selectedDependencia = searchSelectedDependencia;
+            //$scope.selectedSilabo = searchSelectedSilabo;
+
         };
         $scope.searchDialog = function () {
             $('#searchDialog').modal('show');
@@ -275,5 +291,20 @@ similitudControllers.controller('loadSyllabusA', ['$translate', '$routeParams', 
             }
         };
 
+
+
+        String.format = function () {
+            // The string containing the format items (e.g. "{0}")
+            // will and always has to be the first argument.
+            var theString = arguments[0];
+            // start with the second argument (i = 1)
+            for (var i = 1; i < arguments.length; i++) {
+                // "gm" = RegEx options for Global search (more than one instance)
+                // and for Multiline search
+                var regEx = new RegExp("\\{" + (i - 1) + "\\}", "gm");
+                theString = theString.replace(regEx, arguments[i]);
+            }
+            return theString;
+        };
 
     }]); //end groupTagsController 

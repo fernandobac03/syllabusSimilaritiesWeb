@@ -14,13 +14,13 @@ var similitudApp = angular.module('similitudApp', [
 ]);
 
 
-similitudApp.service('temporalData', function(){
+similitudApp.service('temporalData', function () {
     this.selectedSyllabusA = null;
     this.selectedSyllabusB = null;
 
     this.selectedDependencia = "";
     this.selectedInstitucion = "";
-    
+
 });
 similitudApp.service('searchData', function () {
     this.authorSearch = null;
@@ -41,6 +41,19 @@ similitudApp.service('globalData', function () {
     this.endpointsGraph = "http://ucuenca.edu.ec/wkhuska/endpoints";
     this.externalAuthorsGraph = "http://ucuenca.edu.ec/wkhuska/externalauthors";
     this.translateData = null;
+
+    this.CONTEXT = {
+        "uc": "http://ucuenca.edu.ec/ontology#",
+        "foaf": "http://xmlns.com/foaf/0.1/",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "bibo": "http://purl.org/ontology/bibo/",
+        "dc": "http://purl.org/dc/elements/1.1/",
+        "dct": "http://purl.org/dc/terms/",
+        "ies": "http://ies.linkeddata.ec/vocabulary#",
+        "aiiso": "http://purl.org/vocab/aiiso/schema#",
+    };
+
+
     this.PREFIX = ' PREFIX bibo: <http://purl.org/ontology/bibo/>'
             + ' PREFIX foaf: <http://xmlns.com/foaf/0.1/>  '
             + ' PREFIX dct: <http://purl.org/dc/terms/> '
@@ -50,20 +63,34 @@ similitudApp.service('globalData', function () {
             + ' PREFIX ies: <http://ies.linkeddata.ec/vocabulary#> '
             + ' PREFIX aiiso: <http://purl.org/vocab/aiiso/schema#> '
             ;
-    this.CONTEXT = {
-        "uc": "http://ucuenca.edu.ec/ontology#",
-        "foaf": "http://xmlns.com/foaf/0.1/",
-        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-        "bibo": "http://purl.org/ontology/bibo/",
-        "dc": "http://purl.org/dc/elements/1.1/",
-        "dct": "http://purl.org/dc/terms/",
-        "ies": "http://ies.linkeddata.ec/vocabulary#", 
-        "aiiso": "http://purl.org/vocab/aiiso/schema#",
-    };
-    
-    this.urltofindinGOOGLE = 'https://scholar.google.com/scholar?q={0}';
-    this.urltofindinDBLP = 'http://dblp.uni-trier.de/search?q={0}';
-    this.urltofindinSCOPUS = 'http://www.scopus.com/results/results.uri?numberOfFields=0&src=s&clickedLink=&edit=&editSaveSearch=&origin=searchbasic&authorTab=&affiliationTab=&advancedTab=&scint=1&menu=search&tablin=&searchterm1={0}&field1=TITLE&dateType=Publication_Date_Type&yearFrom=Before+1960&yearTo=Present&loadDate=7&documenttype=All&subjects=LFSC&_subjects=on&subjects=HLSC&_subjects=on&subjects=PHSC&_subjects=on&subjects=SOSC&_subjects=on&st1={1}&st2=&sot=b&sdt=b&sl=91&s=TITLE%28{2}%29'
+
+    this.querysearchSilabos = this.PREFIX
+            + 'CONSTRUCT { '
+            + '                 ?silabo rdfs:label ?title. '
+            + '                 ?silabo aiiso:description ?descripcion. '
+            + '                 ?silabo ies:objective      ?objetivo. '
+            + '                 ?silabo ies:belonging_to ?dependencia. '
+            + '                 ?silabo ies:faculty ?nameDependencia. '
+            + '                 ?silabo ies:has_institution ?institucion. '
+            + '                 ?silabo ies:institution ?nameInstitucion . '
+            + '  }'
+            + ' WHERE { '
+            + '     SELECT DISTINCT ?silabo ?title ?objetivo ?descripcion ?dependencia ?institucion ?nameDependencia ?nameInstitucion WHERE {   '
+            + '         ?silabo      aiiso:description ?descripcion. '
+            + '         ?silabo      ies:objective      ?objetivo. '
+            + '         ?silabo      ies:belonging_to   ?dependencia. '
+            + '         ?dependencia rdfs:label         ?nameDependencia. '
+            + '         ?dependencia ies:is_faculty_of  ?institucion. '
+            + '         ?institucion rdfs:label         ?nameInstitucion. '
+            + '         ?silabo      ies:abarca         ?subject. '
+            + '         ?subject     a                  aiiso:Subject.  '
+            + '         ?subject     ies:name           ?title . '
+            + '         FILTER REGEX(str(?title), "{0}", "i") '
+     //       + '         FILTER REGEX(str(?dependencia), "' + dependenciaFilter + '", "i") '
+     //       + '         FILTER REGEX(str(?institucion), "' + institucionFilter + '", "i") '
+            + '     } '
+            + ' } ';
+
 });
 
 similitudApp.config(['$routeProvider',
@@ -140,6 +167,6 @@ similitudApp.config(['$routeProvider',
                 ;
     }]);
 
-    similitudApp.config(['$compileProvider', function ($compileProvider) {
+similitudApp.config(['$compileProvider', function ($compileProvider) {
         $compileProvider.debugInfoEnabled(false);
     }]);
