@@ -64,20 +64,16 @@ similitudApp.service('globalData', function () {
             + ' PREFIX aiiso: <http://purl.org/vocab/aiiso/schema#> '
             ;
 
-    this.querysearchSilabos = this.PREFIX
+    this.querySilabos = this.PREFIX
             + 'CONSTRUCT { '
             + '                 ?silabo rdfs:label ?title. '
-            + '                 ?silabo aiiso:description ?descripcion. '
-            + '                 ?silabo ies:objective      ?objetivo. '
             + '                 ?silabo ies:belonging_to ?dependencia. '
             + '                 ?silabo ies:faculty ?nameDependencia. '
             + '                 ?silabo ies:has_institution ?institucion. '
             + '                 ?silabo ies:institution ?nameInstitucion . '
             + '  }'
             + ' WHERE { '
-            + '     SELECT DISTINCT ?silabo ?title ?objetivo ?descripcion ?dependencia ?institucion ?nameDependencia ?nameInstitucion WHERE {   '
-            + '         ?silabo      aiiso:description ?descripcion. '
-            + '         ?silabo      ies:objective      ?objetivo. '
+            + '     SELECT DISTINCT ?silabo ?title ?dependencia ?institucion ?nameDependencia ?nameInstitucion WHERE {   '
             + '         ?silabo      ies:belonging_to   ?dependencia. '
             + '         ?dependencia rdfs:label         ?nameDependencia. '
             + '         ?dependencia ies:is_faculty_of  ?institucion. '
@@ -86,10 +82,39 @@ similitudApp.service('globalData', function () {
             + '         ?subject     a                  aiiso:Subject.  '
             + '         ?subject     ies:name           ?title . '
             + '         FILTER REGEX(str(?title), "{0}", "i") '
-     //       + '         FILTER REGEX(str(?dependencia), "' + dependenciaFilter + '", "i") '
-     //       + '         FILTER REGEX(str(?institucion), "' + institucionFilter + '", "i") '
             + '     } '
             + ' } ';
+
+
+    this.queryFullSilabos = this.PREFIX
+            + 'CONSTRUCT { '
+            + '                 <{0}> rdfs:label ?title. '
+            + '                 <{0}> aiiso:description ?descripcion. '
+            + '                 <{0}> ies:objective      ?objetivo. '
+            + '                 <{0}> ies:belonging_to ?dependencia. '
+            + '                 <{0}> ies:faculty ?nameDependencia. '
+            + '                 <{0}> ies:has_institution ?institucion. '
+            + '                 <{0}> ies:institution ?nameInstitucion. '
+            + '                 <{0}> ies:has_chapter ?nameCapitulo. '
+            + '  }'
+            + ' WHERE { '
+            + '     SELECT DISTINCT ?silabo ?nameCapitulo  ?title ?objetivo ?descripcion ?dependencia ?institucion ?nameDependencia ?nameInstitucion WHERE {   '
+            + '         <{0}>      aiiso:description ?descripcion. '
+            + '         <{0}>      ies:objective      ?objetivo. '
+            + '         <{0}>      ies:belonging_to   ?dependencia. '
+            + '         ?dependencia rdfs:label         ?nameDependencia. '
+            + '         ?dependencia ies:is_faculty_of  ?institucion. '
+            + '         ?institucion rdfs:label         ?nameInstitucion. '
+            + '         <{0}>      ies:abarca         ?subject. '
+            + '         ?subject     a                  aiiso:Subject.  '
+            + '         ?subject     ies:name           ?title . '
+            + '         <{0}>      ies:abarca  ?contenido. '
+            + '         ?contenido a 	<http://ies.linkeddata.ec/vocabulary/ContenidoAcademico>. '
+            + '         ?contenido  ies:abarca ?capitulos. ' 
+            + '         ?capitulos rdfs:label ?nameCapitulo.  '
+            + '     } order by ?nameCapitulo'
+            + ' } ';
+
 
 });
 

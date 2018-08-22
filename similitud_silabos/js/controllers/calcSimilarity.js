@@ -14,9 +14,7 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
             } else
             {
                 similitudPrealmacenada(temporalData.selectedSyllabusA, temporalData.selectedSyllabusB);
-                $('html,body').animate({
-                    scrollTop: $("#scrollToHere").offset().top
-                }, "slow");
+              
             }
         };
 

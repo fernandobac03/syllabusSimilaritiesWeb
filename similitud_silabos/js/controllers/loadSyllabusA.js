@@ -185,44 +185,17 @@ similitudControllers.controller('loadSyllabusA', ['$translate', '$routeParams', 
         //Para saber cuando el usuario seleccione la dependencia.
         //$scope.$watch('searchText', function () {
         //   buscarSilabo($scope.searchText);
-        //});
-
-
+        //})
+        
         $scope.buscandoSilabo = function ($event, texto) {
-        //$scope.$watch('searchText', function () {
-
-            var query = globalData.PREFIX
-                    + 'CONSTRUCT { '
-                    + '                 ?silabo rdfs:label ?title. '
-                    + '                 ?silabo aiiso:description ?descripcion. '
-                    + '                 ?silabo ies:objective      ?objetivo. '
-                    + '                 ?silabo ies:belonging_to ?dependencia. '
-                    + '                 ?silabo ies:faculty ?nameDependencia. '
-                    + '                 ?silabo ies:has_institution ?institucion. '
-                    + '                 ?silabo ies:institution ?nameInstitucion . '
-                    + '  }'
-                    + ' WHERE { '
-                    + '     SELECT DISTINCT ?silabo ?title ?objetivo ?descripcion ?dependencia ?institucion ?nameDependencia ?nameInstitucion WHERE {   '
-                    + '         ?silabo      aiiso:description ?descripcion. '
-                    + '         ?silabo      ies:objective      ?objetivo. '
-                    + '         ?silabo      ies:belonging_to   ?dependencia. '
-                    + '         ?dependencia rdfs:label         ?nameDependencia. '
-                    + '         ?dependencia ies:is_faculty_of  ?institucion. '
-                    + '         ?institucion rdfs:label         ?nameInstitucion. '
-                    + '         ?silabo      ies:abarca         ?subject. '
-                    + '         ?subject     a                  aiiso:Subject.  '
-                    + '         ?subject     ies:name           ?title . '
-                    + '         FILTER REGEX(str(?title), "'+$scope.searchText+'", "i") '
-                    //       + '         FILTER REGEX(str(?dependencia), "' + dependenciaFilter + '", "i") '
-                    //       + '         FILTER REGEX(str(?institucion), "' + institucionFilter + '", "i") '
-                    + '     } limit 100 '
-                    + ' } ';
-
+            //$scope.$watch('searchText', function () {
 
 
             var institucionFilter = temporalData.selectedInstitucion ? temporalData.selectedInstitucion : "";
             var dependenciaFilter = temporalData.selectedDependencia ? temporalData.selectedDependencia : "";
             //var buildquery = String.format(query, $scope.searchText);
+
+            var query = String.format(globalData.querySilabos, texto);
             $scope.silabosList = [];
             sparqlQuery.querySrv({query: query}, function (rdf) {
                 jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
@@ -233,14 +206,11 @@ similitudControllers.controller('loadSyllabusA', ['$translate', '$routeParams', 
                             //model["Publication"] = pub["foaf:publications"]["@id"];
                             model["silabo"] = silb["@id"];
                             model["name"] = silb["rdfs:label"]["@value"];
-                            model["description"] = silb["aiiso:description"]["@value"];
-                            model["objective"] = silb["ies:objective"]
                             model["dependenciaID"] = silb["ies:belonging_to"]["@id"];
                             model["dependencia"] = silb["ies:faculty"]["@value"];
                             model["institucionID"] = silb["ies:has_institution"]["@id"];
                             model["institucion"] = silb["ies:institution"]["@value"];
-                            model["objective"] = silb["ies:objective"]
-                            $scope.silabosList.push({silaboID: model["silabo"], silaboOBJETIVO: model["objective"], silaboDESCRIPCION: model["description"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboDEPENDENCIAID: model["dependenciaID"], silaboINSTITUCION: model["institucion"], silaboINSTITUCIONID: model["institucionID"]});
+                            $scope.silabosList.push({silaboID: model["silabo"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboDEPENDENCIAID: model["dependenciaID"], silaboINSTITUCION: model["institucion"], silaboINSTITUCIONID: model["institucionID"]});
                         });
                         applyvaluesSearchSilabos();
                         waitingDialog.hide();
@@ -255,8 +225,8 @@ similitudControllers.controller('loadSyllabusA', ['$translate', '$routeParams', 
         //)
         ;//end buscarSilabo
         function applyvaluesSearchSilabos() {
-           $scope.$apply(function () {
-            $scope.silabos = $scope.silabosList;
+            $scope.$apply(function () {
+                $scope.silabos = $scope.silabosList;
             });
         }
 
@@ -264,7 +234,40 @@ similitudControllers.controller('loadSyllabusA', ['$translate', '$routeParams', 
         {
 
             $('#searchDialog').modal('hide');
-            $scope.silabotoShow = setSelectedSilabo;
+            $('#contenidoA').css('display', '');
+
+            var query = String.format(globalData.queryFullSilabos, setSelectedSilabo["silaboID"]);
+            var fullSilabo = [];
+            sparqlQuery.querySrv({query: query}, function (rdf) {
+                jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
+                    if (compacted)
+                    {
+                        var model = {};
+                        //model["Publication"] = pub["foaf:publications"]["@id"];
+                        model["silabo"] = compacted["@id"];
+                        model["name"] = compacted["rdfs:label"]["@value"];
+                        model["description"] = compacted["aiiso:description"]["@value"];
+                        model["objective"] = compacted["ies:objective"]
+                        model["dependenciaID"] = compacted["ies:belonging_to"]["@id"];
+                        model["dependencia"] = compacted["ies:faculty"]["@value"];
+                        model["institucionID"] = compacted["ies:has_institution"]["@id"];
+                        model["institucion"] = compacted["ies:institution"]["@value"];
+                        var objetivos = [];
+                        objetivos.push(compacted["ies:objective"]);
+                        model["objective"] = compacted["ies:objective"].length > 1 ? compacted["ies:objective"]: objetivos;
+                        model["chapter"] = compacted["ies:has_chapter"];
+                        fullSilabo.push({silaboID: model["silabo"], silaboCHAPTER: model["chapter"], silaboOBJETIVO: model["objective"], silaboDESCRIPCION: model["description"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboDEPENDENCIAID: model["dependenciaID"], silaboINSTITUCION: model["institucion"], silaboINSTITUCIONID: model["institucionID"]});
+                        applyFullSilabo(fullSilabo);
+                        waitingDialog.hide();
+                    } else//no retrieve data
+                    {
+                        //alert("No se han recuperado datos de las dependencias");
+                        waitingDialog.hide();
+                    }
+                }); //end jsonld.compact
+            }); //end sparqlService
+
+
             temporalData.selectedSyllabusA = setSelectedSilabo["silaboID"];
 
 
@@ -276,6 +279,12 @@ similitudControllers.controller('loadSyllabusA', ['$translate', '$routeParams', 
             //$scope.selectedSilabo = searchSelectedSilabo;
 
         };
+        function applyFullSilabo(fullSilabo)
+        {
+            $scope.$apply(function () {
+                $scope.silabotoShow = fullSilabo[0];
+            });
+        }
         $scope.searchDialog = function () {
             $('#searchDialog').modal('show');
         };
