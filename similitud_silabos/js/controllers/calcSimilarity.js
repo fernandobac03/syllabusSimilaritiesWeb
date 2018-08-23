@@ -14,7 +14,7 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
             } else
             {
                 similitudPrealmacenada(temporalData.selectedSyllabusA, temporalData.selectedSyllabusB);
-              
+
             }
         };
 
@@ -43,11 +43,14 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
                         $scope.similitud.push({similitudID: model["id"], similitudValue: model["value"]});
 
                         applyvaluesSimilitud();
+                        $('html,body').animate({
+                            scrollTop: $("#scrollToValue").offset().top
+                        }, "slow")
                         waitingDialog.hide();
                     } else
                     {
                         alert("No se ha recuperado información, consulte al administrador")
-                         waitingDialog.hide();
+                        waitingDialog.hide();
                     }
                 });
             });
@@ -57,6 +60,7 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
         function applyvaluesSimilitud() {
             $scope.$apply(function () {
                 $scope.similitudFinal = $scope.similitud;
+
             });
         }
         ;

@@ -9,7 +9,7 @@
 
         <center>
             <div class="page-header">
-                <h2 class="text-success">{{'similitudRepoTitle'| translate}}</h2>
+                <h2 class="text-uppercase text-primary">{{'similitudRepoTitle'| translate}}</h2>
             </div>
         </center>
     </div>
@@ -98,10 +98,10 @@
                     <label>Titulo</label>
                 </div> 
                 <div class="col-md-10" >
-                    <input readonly type="text" style="width: 100%" value="{{silabotoShow['silaboNAME']}}"> 
+                    {{silabotoShow['silaboNAME']}} 
                 </div>
             </div>
-            
+
             <div id="contenidoA" class="col-md-12" style="display: none" >
                 <table class="table table-striped ">
                     <tbody>
@@ -115,17 +115,17 @@
                         </tr>
                         <tr>
                             <td>Institución</td>
-                            <td><input readonly style="width: 100%" type="text" value="{{silabotoShow['silaboINSTITUCION']}}"></td>
+                            <td>{{silabotoShow['silaboINSTITUCION']}}</td>
                         </tr>
                         <tr>
                             <td>Dependencia</td>
-                            <td><input readonly style="width: 100%" type="text" value="{{silabotoShow['silaboDEPENDENCIA']}}"></td>
+                            <td>{{silabotoShow['silaboDEPENDENCIA']}}</td>
                         </tr>
                         <tr>
                             <td>Capítulos</td>
                             <td><div style="overflow: auto; height: 120px"><li readonly ng-repeat="capitulo in silabotoShow['silaboCHAPTER']"> - {{capitulo['@value']}}</li></div></td>
                         </tr>
-                        
+
                     </tbody>
                 </table>
             </div>
@@ -212,13 +212,13 @@
                     </div>
                 </div>
             </div> <!--fin DIV buscador-->
-            
+
             <div>
                 <div class="col-md-2">
                     <label>Titulo</label>
                 </div> 
                 <div class="col-md-10" >
-                    <input readonly type="text" style="width: 100%" value="{{silabotoShow['silaboNAME']}}"> 
+                    {{silabotoShow['silaboNAME']}} 
                 </div>
             </div>
             <div id="contenidoB" class="col-md-12" style="display: none;">
@@ -234,17 +234,17 @@
                         </tr>
                         <tr>
                             <td>Institución</td>
-                            <td><input readonly style="width: 100%" type="text" value="{{silabotoShow['silaboINSTITUCION']}}"></td>
+                            <td>{{silabotoShow['silaboINSTITUCION']}}</td>
                         </tr>
                         <tr>
                             <td>Dependencia</td>
-                            <td><input readonly style="width: 100%" type="text" value="{{silabotoShow['silaboDEPENDENCIA']}}"></td>
+                            <td>{{silabotoShow['silaboDEPENDENCIA']}}</td>
                         </tr>
                         <tr>
                             <td>Capítulos</td>
                             <td><div style="overflow: auto; height: 120px"><li readonly ng-repeat="capitulo in silabotoShow['silaboCHAPTER']"> - {{capitulo['@value']}}</li></div></td>
                         </tr>
-                 
+
                     </tbody>
                 </table>
             </div>
@@ -254,9 +254,12 @@
 
 
     <div id="scrollToCalc" class="col-md-12" style="text-align: center; padding: 5%" ng-controller="calcSimilarity">
-        <button type="button" class="btn btn-primary" ng-click="ifClick()">Calcular Similitud</button>
-        <label>{{similitudFinal[0]["similitudValue"]}}</label>
-
+        <div class="col-md-12">
+            <button type="button" class="btn btn-primary" ng-click="ifClick()">Calcular Similitud</button>
+        </div>
+        <div id="scrollToValue" class="col-md-12 text-success" style="padding-top: 30px; ">
+            <h1>{{similitudFinal[0]["similitudValue"]}}</h1>
+        </div>
     </div>
-    
+
 </div>

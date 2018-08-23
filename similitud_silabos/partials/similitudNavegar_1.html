@@ -9,30 +9,30 @@
 
         <center>
             <div class="page-header">
-                <h2 class="text-success">{{'similitudRepoTitle'| translate}}</h2>
+                <h2 class="text-primary">Navegar</h2>
             </div>
         </center>
     </div>
     <div class="col-md-12" ng-controller="loadSyllabusA" >
-        <h3 class="text-info" style="text-align: left">{{'silaboA'| translate}}:</h3>
         <div class="row" style="padding: 2%">
             <div class="col-md-3">
-                <h3 class="text-success" style="text-align: left">{{'seleccioneInstitucion'| translate}}:</h3>
+                <h3 class="text-primary" style="text-align: left">{{'seleccioneInstitucion'| translate}}:</h3>
                 <select class="form-control" name="board" id="institutionA" ng-model="selectedInstitution"  ng-options="key.instID as key.instNAME for key  in institutionsFinal" ng-class="{selected: key.instID === selectedsearchInst}">
                     <option value="">Seleccione</option>
                 </select>
             </div>
 
-            <div class="col-md-3">
-                <h3 class="text-success" style="text-align: left">{{'dependencia'| translate}}:</h3>
+            <div class="col-md-4">
+                <h3 class="text-primary" style="text-align: left">{{'dependencia'| translate}}:</h3>
                 <select   class="form-control" name="group" id="group" ng-model="selectedDependencia" ng-options="key.depenID as key.depenNAME for key in dependenciasFinal" >
                     <option value="">Seleccione</option>
                     <!--            <option value="name">Autor</option> -->
-                </select>
+                </select>                </select>
+
             </div>
 
-            <div class="col-md-3">
-                <h3 class="text-success" style="text-align: left">{{'silabo'| translate}}:</h3>
+            <div class="col-md-5">
+                <h3 class="text-primary" style="text-align: left">{{'silabo'| translate}}:</h3>
                 <select   class="form-control" name="groupb" id="groupb" ng-model="selectedSilabo" ng-options="key.silaboID as key.silaboNAME for key in silabosFinal" >
                     <option value="">Seleccione</option>
                 </select>

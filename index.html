@@ -73,6 +73,7 @@
         <script src="similitud_silabos/js/controllers/loadData.js"></script>
         <script src="similitud_silabos/js/controllers/listSources.js"></script>
         <script src="similitud_silabos/js/controllers/loadSyllabusA.js"></script>
+        <script src="similitud_silabos/js/controllers/similitudNavegarA.js"></script>
         <script src="similitud_silabos/js/controllers/loadSyllabusB.js"></script>
         <script src="similitud_silabos/js/controllers/calcSimilarity.js"></script>
         
@@ -208,19 +209,19 @@
                 <!--</nav><!-- Aqui estamos cerrando la nueva etiqueta nav -->
         <!--    </div>
         -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <div class="bg-primary collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="color: #FAFAFA">
                 <ul class="nav navbar-nav" ng-controller="translate">
          
 
 
 
-                    <li><a ng-click="refreshLang()" href="#/{{lang}}/">{{'home'| translate}}<span class="sr-only">(current)</span></a></li>
+                    <li><a style="color: #FAFAFA" ng-click="refreshLang()" href="#/{{lang}}/">{{'home'| translate}}<span class="sr-only">(current)</span></a></li>
                     <!--<li><a ng-click="refreshLang()" href="#/{{lang}}/info/about">{{'about'| translate}}</a></li>
                         <li><a ng-click="refreshLang()" href="#/{{lang}}/info/contact">{{'contact'| translate}}</a></li>-
                         <li><a ng-click="refreshLang()" href="#/{{lang}}/info/help">{{'help'| translate}}</a></li>
                         <li><a ng-click="refreshLang()" href="#/{{lang}}/info/sources">{{'sources'| translate}}</a></li> -->
-                    <li><a ng-click="refreshLang()" href="#/{{lang}}/">{{'help'| translate}}</a></li>
-                    <li><a ng-click="refreshLang()" href="#/{{lang}}/">{{'sources'| translate}}</a></li>
+                    <li><a style="color: #FAFAFA" ng-click="refreshLang()" href="#/{{lang}}/">{{'help'| translate}}</a></li>
+                    <li><a style="color: #FAFAFA" ng-click="refreshLang()" href="#/{{lang}}/">{{'sources'| translate}}</a></li>
                  
                 </ul>
 <!--

@@ -15,11 +15,14 @@ var similitudApp = angular.module('similitudApp', [
 
 
 similitudApp.service('temporalData', function () {
-    this.selectedSyllabusA = null;
-    this.selectedSyllabusB = null;
+    this.selectedSyllabusA = "";
+    this.selectedSyllabusB = "";
 
-    this.selectedDependencia = "";
-    this.selectedInstitucion = "";
+    this.selectedDependenciaA = "";
+    this.selectedDependenciaB = "";
+    this.selectedInstitucionA = "";
+    this.selectedInstitucionB = "";
+    this.temporalDependencias= []
 
 });
 similitudApp.service('searchData', function () {
@@ -181,6 +184,9 @@ similitudApp.config(['$routeProvider',
                 when('/:lang/cepraxi/similitud', {
                     templateUrl: '/similitud_silabos/partials/similitudRepo.html'
                 }).
+                when('/:lang/cepraxi/navegar', {
+                    templateUrl: '/similitud_silabos/partials/similitudNavegar.html'
+                }).        
 //                .
                 /*when('/phones/:phoneId', {
                  templateUrl: 'partials/phone-detail.html',
