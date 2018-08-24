@@ -202,7 +202,7 @@ similitudControllers.controller('loadSyllabusB', ['$translate', '$routeParams', 
         {
             $('#searchDialog2').modal('hide');
             $('#contenidoB').css('display', '');
-
+            $('#scrollToValue').css('display', 'none');
             var query = String.format(globalData.queryFullSilabos, setSelectedSilabo["silaboID"]);
             var fullSilabo = [];
             sparqlQuery.querySrv({query: query}, function (rdf) {

@@ -58,9 +58,9 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
         ;
 
         function applyvaluesSimilitud() {
+            $('#scrollToValue').css('display', '');
             $scope.$apply(function () {
                 $scope.similitudFinal = $scope.similitud;
-
             });
         }
         ;

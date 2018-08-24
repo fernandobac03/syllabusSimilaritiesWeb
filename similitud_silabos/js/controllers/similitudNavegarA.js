@@ -5,7 +5,8 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
         $translate.use($routeParams.lang);
         $scope.if_B = function ()
         {
-              $('#seleccionandoB').css('display', '');
+            $('#seleccionandoB').css('display', '');
+            $('#otrosilabo').css('display', 'none');
         };
 
 
@@ -64,8 +65,8 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
         ;
 
         //Cuando el usuario selecciona la institución
-        $scope.$watch('selectedInstitution', function () {//Funcion para cuando se selecciona la Research Area
-            loadDependenciasA($scope.selectedInstitution); //query and load resource related with selected theme
+        $scope.$watch('selectedInstitutionA', function () {//Funcion para cuando se selecciona la Research Area
+            loadDependenciasA($scope.selectedInstitutionA); //query and load resource related with selected theme
         });
 
         $scope.$watch('selectedInstitutionB', function () {//Funcion para cuando se selecciona la Research Area
@@ -74,26 +75,40 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
 
 
         //Para saber cuando el usuario seleccione la dependencia.
-        $scope.$watch('selectedDependencia', function () {
-            loadSilabosA($scope.selectedInstitution, $scope.selectedDependencia)
-            temporalData.selectedDependenciaA = $scope.selectedDependencia;
+        $scope.$watch('selectedDependenciaA', function () {
+            loadSilabosA($scope.selectedInstitutionA, $scope.selectedDependenciaA)
+            temporalData.selectedDependenciaA = $scope.selectedDependenciaA;
         });
 
         //Para saber cuando el usuario seleccione la dependencia.
         $scope.$watch('selectedDependenciaB', function () {
-            loadSilabosB($scope.selectedInstitution, $scope.selectedDependenciaB)
+            loadSilabosB($scope.selectedInstitutionB, $scope.selectedDependenciaB)
             temporalData.selectedDependenciaB = $scope.selectedDependenciaB;
         });
 
-        $scope.$watch('selectedSilabo', function () {
+        $scope.$watch('selectedSilaboA', function () {
 
-            temporalData.selectedSyllabusA = $scope.selectedSilabo;
+            temporalData.selectedSyllabusA = $scope.selectedSilaboA;
             if (typeof temporalData.selectedSyllabusA === 'undefined')
             {
             } else
             {
-                mostrarFullSilabo(temporalData.selectedSyllabusA);
                 $('#contenidoNavegarA').css('display', '');
+                $('#otrosilabo').css('display', '');
+                mostrarFullSilaboA(temporalData.selectedSyllabusA);
+            }
+        });
+        $scope.$watch('selectedSilaboB', function () {
+
+            temporalData.selectedSyllabusB = $scope.selectedSilaboB;
+            if (typeof temporalData.selectedSyllabusB === 'undefined')
+            {
+            } else
+            {
+                $('#contenidoNavegarB').css('display', '');
+                mostrarFullSilaboB(temporalData.selectedSyllabusB);
+                similitudPrealmacenada(temporalData.selectedSyllabusA, temporalData.selectedSyllabusB);
+
             }
         });
 
@@ -172,7 +187,7 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
 
         function applyvaluesDependenciasA(dependencias) {
             $scope.$apply(function () {
-                $scope.dependenciasFinal = dependencias;
+                $scope.dependenciasFinalA = dependencias;
             });
         }
 
@@ -255,7 +270,7 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
 
         function applyvaluesSilabosA(listadoSilabos) {
             $scope.$apply(function () {
-                $scope.silabosFinal = listadoSilabos;
+                $scope.silabosFinalA = listadoSilabos;
             });
         }
         function applyvaluesSilabosB(listadoSilabos) {
@@ -315,7 +330,7 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
             });
         }
 
-        function mostrarFullSilabo(silaboID)
+        function mostrarFullSilaboA(silaboID)
         {
             var query = String.format(globalData.queryFullSilabos, silaboID);
             var fullSilabo = [];
@@ -338,7 +353,7 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
                         model["objective"] = compacted["ies:objective"].length > 1 ? compacted["ies:objective"] : objetivos;
                         model["chapter"] = compacted["ies:has_chapter"];
                         fullSilabo.push({silaboID: model["silabo"], silaboCHAPTER: model["chapter"], silaboOBJETIVO: model["objective"], silaboDESCRIPCION: model["description"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboDEPENDENCIAID: model["dependenciaID"], silaboINSTITUCION: model["institucion"], silaboINSTITUCIONID: model["institucionID"]});
-                        applyFullSilabo(fullSilabo);
+                        applyFullSilaboA(fullSilabo);
                         waitingDialog.hide();
                     } else//no retrieve data
                     {
@@ -348,13 +363,108 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
                 }); //end jsonld.compact
             }); //end sparqlService
         }
-        ;
-        function applyFullSilabo(fullSilabo)
+        ;//Fin mostrarFullSilaboA
+
+        function mostrarFullSilaboB(silaboID)
+        {
+            var query = String.format(globalData.queryFullSilabos, silaboID);
+            var fullSilabo = [];
+            sparqlQuery.querySrv({query: query}, function (rdf) {
+                jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
+                    if (compacted)
+                    {
+                        var model = {};
+                        //model["Publication"] = pub["foaf:publications"]["@id"];
+                        model["silabo"] = compacted["@id"];
+                        model["name"] = compacted["rdfs:label"]["@value"];
+                        model["description"] = compacted["aiiso:description"]["@value"];
+                        model["objective"] = compacted["ies:objective"]
+                        model["dependenciaID"] = compacted["ies:belonging_to"]["@id"];
+                        model["dependencia"] = compacted["ies:faculty"]["@value"];
+                        model["institucionID"] = compacted["ies:has_institution"]["@id"];
+                        model["institucion"] = compacted["ies:institution"]["@value"];
+                        var objetivos = [];
+                        objetivos.push(compacted["ies:objective"]);
+                        model["objective"] = compacted["ies:objective"].length > 1 ? compacted["ies:objective"] : objetivos;
+                        model["chapter"] = compacted["ies:has_chapter"];
+                        fullSilabo.push({silaboID: model["silabo"], silaboCHAPTER: model["chapter"], silaboOBJETIVO: model["objective"], silaboDESCRIPCION: model["description"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboDEPENDENCIAID: model["dependenciaID"], silaboINSTITUCION: model["institucion"], silaboINSTITUCIONID: model["institucionID"]});
+                        applyFullSilaboB(fullSilabo);
+                        waitingDialog.hide();
+                    } else//no retrieve data
+                    {
+                        //alert("No se han recuperado datos de las dependencias");
+                        waitingDialog.hide();
+                    }
+                }); //end jsonld.compact
+            }); //end sparqlService
+        }
+        ;//Fin mostrarFullSilaboB
+
+
+        function applyFullSilaboA(fullSilabo)
         {
             $scope.$apply(function () {
-                $scope.silabotoShow = fullSilabo[0];
+                $scope.showSilaboA = fullSilabo[0];
             });
         }
+        ;
+
+        function applyFullSilaboB(fullSilabo)
+        {
+            $scope.$apply(function () {
+                $scope.showSilaboB = fullSilabo[0];
+            });
+        }
+        ;
+
+        function similitudPrealmacenada(silaboA, silaboB) {
+            waitingDialog.show("Calculando Similitud");
+            var querySimilitud = globalData.PREFIX
+
+                    + ' CONSTRUCT {?temporalResource <http://ies.linkeddata.ec/vocabulary#value>  ?value }'
+                    + ' WHERE {'
+                    //+ '     SELECT DISTINCT ?o  (str(?o) as ?label)'
+                    + '     SELECT DISTINCT ?temporalResource ?value  '
+                    + '         WHERE {'
+                    + '             <' + silaboA + '> <http://ies.linkeddata.ec/vocabulary#has_similarity> ?temporalResource. '
+                    + '             ?temporalResource <http://ies.linkeddata.ec/vocabulary#has_similar_resource> <' + silaboB + '>. '
+                    + '             ?temporalResource <http://ies.linkeddata.ec/vocabulary#value> ?value '
+                    + '         } '
+                    + ' }';
+            var similitud = [];
+            sparqlQuery.querySrv({query: querySimilitud}, function (rdf) {
+                jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
+                    if (compacted && compacted["ies:value"])
+                    {
+                        var model = {};
+                        model["id"] = compacted["@id"];
+                        model["value"] = compacted["ies:value"]["@value"];
+                        similitud.push({similitudID: model["id"], similitudValue: model["value"]});
+
+                        applyvaluesSimilitud(similitud);
+
+                        waitingDialog.hide();
+                    } else
+                    {
+                        alert("No se ha recuperado información, consulte al administrador")
+                        waitingDialog.hide();
+                    }
+                });
+            });
+        }
+        ;
+
+        function applyvaluesSimilitud(similitud) {
+            $("#scrollToValue").css('display', '');
+            $('html,body').animate({
+                scrollTop: $("#scrollToValue").offset().top}, "slow")
+            $scope.$apply(function () {
+                $scope.similitudFinal = similitud;
+            });
+        }
+        ;
+
+
         $scope.searchDialog = function () {
             $('#searchDialog').modal('show');
         };
@@ -369,8 +479,6 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
                 this.$apply(fn);
             }
         };
-
-
 
         String.format = function () {
             // The string containing the format items (e.g. "{0}")

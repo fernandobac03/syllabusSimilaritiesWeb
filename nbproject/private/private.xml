@@ -4,13 +4,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/ucuenca/NetBeansProjects/similitud/index.html</file>
+            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/css/visuals/similitudNavegar.css</file>
             <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/js/app.js</file>
-            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/js/controllers/calcSimilarity.js</file>
+            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/partials/similitudNavegar.html</file>
             <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/js/controllers/loadSyllabusA.js</file>
+            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/js/controllers/similitudNavegarA.js</file>
             <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/js/controllers/loadSyllabusB.js</file>
             <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/partials/similitudRepo.html</file>
-            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/css/visuals/similitudRepo.css</file>
-            <file>file:/home/ucuenca/NetBeansProjects/similitud/similitud_silabos/partials/home.html</file>
         </group>
     </open-files>
 </project-private>

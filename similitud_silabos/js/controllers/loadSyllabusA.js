@@ -236,6 +236,7 @@ similitudControllers.controller('loadSyllabusA', ['$translate', '$routeParams', 
 
             $('#searchDialog').modal('hide');
             $('#contenidoA').css('display', '');
+            $('#scrollToValue').css('display', 'none');
 
             var query = String.format(globalData.queryFullSilabos, setSelectedSilabo["silaboID"]);
             var fullSilabo = [];
