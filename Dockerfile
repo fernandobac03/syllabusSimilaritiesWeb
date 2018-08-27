@@ -31,11 +31,11 @@ ADD / /opt/tomcat/webapps/ROOT/
 
 
 #Changing default tomcat port
-RUN sed 's/8080/8081/g' /opt/tomcat/conf/server.xml > newserver.xml
+RUN sed 's/8080/80/g' /opt/tomcat/conf/server.xml > newserver.xml
 RUN mv newserver.xml /opt/tomcat/conf/server.xml
 
 
-EXPOSE 8081
+EXPOSE 80
 
 COPY /start_tomcat.sh /
 RUN chmod +x /start_tomcat.sh
