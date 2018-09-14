@@ -465,6 +465,12 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
         ;
 
 
+
+
+
+
+
+
         $scope.searchDialog = function () {
             $('#searchDialog').modal('show');
         };

@@ -2,6 +2,7 @@
 <html lang="en" ng-app="similitudApp">
     <head>
 
+       
         <link rel="shortcut icon" href="similitud_silabos/images/faviconu.ico">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -27,6 +28,10 @@
         <script src="bower_components/underscore/underscore-min.js"></script>
         <script src="bower_components/d3/d3.js"></script>
         <script src="bower_components/d3-tip/index.js"></script>
+        <script src="bower_components/angular-js-xlsx/angular-js-xlsx.js"></script>
+        <script src="bower_components/js-xlsx/dist/xlsx.core.min.js"></script>
+        
+        
         <script src="custom_libs/d3-context-menu/js/d3-context-menu.js"></script>
         <script src="custom_libs/angular-sanitize/angular-sanitize.js"></script>
 
@@ -49,9 +54,9 @@
         <link rel="stylesheet" href="similitud_silabos/css/app.css">
         <link rel="stylesheet" href="similitud_silabos/css/visuals/similitudRepo.css">
         <link rel="stylesheet" href="similitud_silabos/css/visuals/similitudNavegar.css">
-        
+
         <script src="similitud_silabos/js/app.js"></script>
-        
+
         <script src="similitud_silabos/js/controllers/controllers.js"></script>
         <script src="similitud_silabos/js/controllers/mainBar.js"></script>
         <!--<script src="similitud_silabos/js/controllers/countAuthors.js"></script>
@@ -77,7 +82,8 @@
         <script src="similitud_silabos/js/controllers/similitudNavegarA.js"></script>
         <script src="similitud_silabos/js/controllers/loadSyllabusB.js"></script>
         <script src="similitud_silabos/js/controllers/calcSimilarity.js"></script>
-        
+        <script src="similitud_silabos/js/controllers/loadExcel.js"></script>
+
         <script src="similitud_silabos/js/services.js"></script>
 
         <script src="similitud_silabos/js/components/waitingDialog.js"></script>
@@ -87,7 +93,8 @@
         <script src="similitud_silabos/js/components/FileSaver.js"></script>
         <script src="similitud_silabos/js/components/stringsDistance.js"></script>
         <script src="similitud_silabos/js/components/d3.geo.js"></script>
-
+      <script src="similitud_silabos/js/components/actionsExcel.js"></script>
+      
 
         <script src="similitud_silabos/js/visuals/pieChart.js"></script>
         <script src="similitud_silabos/js/visuals/barChart.js"></script>
@@ -99,7 +106,12 @@
         <script src="similitud_silabos/js/visuals/clustersCloud.js"></script>
         <script src="similitud_silabos/js/visuals/genericCloud.js"></script>
         <script src="similitud_silabos/js/visuals/map.js"></script>
-         
+
+
+        
+        
+
+
         <!-- APP PRODUCCION -->
         <!--<link rel="stylesheet" href="wkhome/cssmin/animations.min.css">
         <link rel="stylesheet" href="wkhome/cssmin/visuals/general.min.css"> 
@@ -164,7 +176,7 @@
         <script src="wkhome/jsmin/visuals/map.min.js"></script>
         
         <!--Fin Importacion de Scripts-->
-        
+
         <script type="text/javascript">
             <!--
       $(document).ready(function () {
@@ -185,34 +197,34 @@
 
         </div>
         <!--<div ng-controller="loadData"></div>-->
- 
+
         <!-- <div class="view-container"> -->
         <nav class="navbar navbar-inverse navbar-fixed-top" style="opacity:1; margin-bottom:0; border:0; z-index: 0;">
-           
-        
+
+
             <!-- MENU DESPLEGABLE -->
-        <!--
-            <div id="headerdesplegable">
-                <!--<nav> <!-- Aqui estamos iniciando la nueva etiqueta nav -->
-        <!--        <ul class="nav desplegable">
-                    <li><img style="height: 45px;padding-right: 4px;" src='wkhome/images/logo_UC.png'  alt="REDI"><img style="width: 7%" src='wkhome/images/icono_menu.png'  alt="Similary"> 
-                        <ul ng-controller="translate">
-                            <li><a class="opcion" ng-click="refreshLang()" href="#/{{lang}}/">{{'Home'| translate}}</a></li>
-                            <li><a class="opcion" ng-click="refreshLang()" href="#/{{lang}}/tags/cloud">{{'Keywords Cloud'| translate}}</a></li>
-                            <li><a class="opcion" ng-click="refreshLang()" href="#/{{lang}}/cloud/group-by">{{'Group By Keyword'| translate}}</a></li>
-                            <li><a class="opcion"  ng-click="refreshLang()" href="#/{{lang}}/geo-views/sources">{{'Map View'| translate}}</a></li>
-                            <li><a class="opcion" ng-click="refreshLang()" href="#/{{lang}}/cloud/clusters">{{'Clustering by Research Area'| translate}}</a></li>
-                        <!--<li><a class="opcion" ng-click="refreshLang()" href="#/{{lang}}/cloud/keywords">{{'Clusters by Keyword'| translate}}</a></li>-->
-        <!--                    <li><a class="opcion" ng-click="refreshLang()" href="#/{{lang}}/data/statistics">{{'Statistics'| translate}}</a></li> 
-                        </ul>
-                    </li>                     
-                </ul>
-                <!--</nav><!-- Aqui estamos cerrando la nueva etiqueta nav -->
-        <!--    </div>
-        -->
-        <div class="bg-primary collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="color: #FAFAFA">
+            <!--
+                <div id="headerdesplegable">
+            <!--<nav> <!-- Aqui estamos iniciando la nueva etiqueta nav -->
+            <!--        <ul class="nav desplegable">
+                        <li><img style="height: 45px;padding-right: 4px;" src='wkhome/images/logo_UC.png'  alt="REDI"><img style="width: 7%" src='wkhome/images/icono_menu.png'  alt="Similary"> 
+                            <ul ng-controller="translate">
+                                <li><a class="opcion" ng-click="refreshLang()" href="#/{{lang}}/">{{'Home'| translate}}</a></li>
+                                <li><a class="opcion" ng-click="refreshLang()" href="#/{{lang}}/tags/cloud">{{'Keywords Cloud'| translate}}</a></li>
+                                <li><a class="opcion" ng-click="refreshLang()" href="#/{{lang}}/cloud/group-by">{{'Group By Keyword'| translate}}</a></li>
+                                <li><a class="opcion"  ng-click="refreshLang()" href="#/{{lang}}/geo-views/sources">{{'Map View'| translate}}</a></li>
+                                <li><a class="opcion" ng-click="refreshLang()" href="#/{{lang}}/cloud/clusters">{{'Clustering by Research Area'| translate}}</a></li>
+            <!--<li><a class="opcion" ng-click="refreshLang()" href="#/{{lang}}/cloud/keywords">{{'Clusters by Keyword'| translate}}</a></li>-->
+            <!--                    <li><a class="opcion" ng-click="refreshLang()" href="#/{{lang}}/data/statistics">{{'Statistics'| translate}}</a></li> 
+                            </ul>
+                        </li>                     
+                    </ul>
+            <!--</nav><!-- Aqui estamos cerrando la nueva etiqueta nav -->
+            <!--    </div>
+            -->
+            <div class="bg-primary collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="color: #FAFAFA">
                 <ul class="nav navbar-nav" ng-controller="translate">
-         
+
 
 
 
@@ -223,37 +235,37 @@
                         <li><a ng-click="refreshLang()" href="#/{{lang}}/info/sources">{{'sources'| translate}}</a></li> -->
                     <li><a style="color: #FAFAFA" ng-click="refreshLang()" href="#/{{lang}}/">{{'help'| translate}}</a></li>
                     <li><a style="color: #FAFAFA" ng-click="refreshLang()" href="#/{{lang}}/">{{'sources'| translate}}</a></li>
-                 
+
                 </ul>
-<!--
-                <ul class="nav navbar-nav navbar-right" style="padding-right:0px" ng-controller="translate">
-                    <li>
-                        <a style="padding-top: 10px;" ng-click="setLanguage('en')">
-                            <img style="height:15px" src='wkhome/images/en-icon.gif'>
-                        </a>
-                    </li>
-                    <li> 
-                        <a style="padding-top: 10px;" ng-click="setLanguage('es')" >
-                            <img style="height: 15px" src='wkhome/images/es-icon.gif'>
-                        </a>
-                    </li>
-                    
-
-
-
-
-
-                    <form class="navbar-form navbar-left" role="search" ng-submit="submit()" ng-controller="searchText" style="padding-right: 30px; ">
-                        <div class="form-group">
-                            <input  name="searchText" ng-model="searchText" type="text" class="form-control input-md" placeholder="{{'Search'| translate}}..">
-                        </div>
-                    </form>
-                </ul>
-    -->            
+                <!--
+                                <ul class="nav navbar-nav navbar-right" style="padding-right:0px" ng-controller="translate">
+                                    <li>
+                                        <a style="padding-top: 10px;" ng-click="setLanguage('en')">
+                                            <img style="height:15px" src='wkhome/images/en-icon.gif'>
+                                        </a>
+                                    </li>
+                                    <li> 
+                                        <a style="padding-top: 10px;" ng-click="setLanguage('es')" >
+                                            <img style="height: 15px" src='wkhome/images/es-icon.gif'>
+                                        </a>
+                                    </li>
+                                    
+                
+                
+                
+                
+                
+                                    <form class="navbar-form navbar-left" role="search" ng-submit="submit()" ng-controller="searchText" style="padding-right: 30px; ">
+                                        <div class="form-group">
+                                            <input  name="searchText" ng-model="searchText" type="text" class="form-control input-md" placeholder="{{'Search'| translate}}..">
+                                        </div>
+                                    </form>
+                                </ul>
+                -->            
             </div><!-- /.navbar-collapse -->
-            
-            
-            
+
+
+
             <!--
             <div class="col-md-12">
               
@@ -270,12 +282,12 @@
           </div>
             -->
 
-        
-
-    </nav>
-    <!--<div style="position: absolute;right: 5px;top: 15px;"><img src="images/Marmotta_Head.png"></div>-->
 
 
-     <!--<div ng-view class="view-frame"></div> -->
-</body>
+        </nav>
+        <!--<div style="position: absolute;right: 5px;top: 15px;"><img src="images/Marmotta_Head.png"></div>-->
+
+
+        <!--<div ng-view class="view-frame"></div> -->
+    </body>
 </html>

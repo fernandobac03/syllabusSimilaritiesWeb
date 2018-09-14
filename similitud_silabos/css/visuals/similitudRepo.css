@@ -12,3 +12,10 @@ and open the template in the editor.
       background-color: #f7e1b5;
       cursor: pointer;
     }
+    
+    #tablaLoadDataDialog {
+    border-collapse: collapse;
+    width:100%
+    }
+    
+    

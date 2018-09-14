@@ -13,13 +13,23 @@
             </div>
         </center>
     </div>
+
+
+
+
+    <!--------Inicia acciones con silabo A--->
     <div class="col-md-6" ng-controller="loadSyllabusA" >
         <h3 class="text-info" style="text-align: left">{{'silaboA'| translate}}:</h3>
         <div class="row" style="padding: 2%">
 
 
-            <div class="buscador col-md-12" style="padding-top: 2%" >
-                <button ng-click="searchDialog()">Buscar...</button>
+            <div class="col-md-12">
+
+                <div class="ingresar col-md-12" style="padding: 2%" >
+                    <button ng-click="searchDialog()">Buscar Sílabo...</button>
+                    <button ng-click="addDialog()">Ingresar Sílabo...</button>
+                </div>  
+
                 <div class="modal fade"  id="searchDialog" tabindex="-1" role="dialog" aria-labelledby="Buscador de Sílabos" aria-hidden="true">
                     <div class="modal-dialog  modal-md">
                         <div class="modal-content" style = "width: 800px; height: 500px">
@@ -32,27 +42,6 @@
                                     <div class="col-md-3">
                                         <input ng-model="searchText" ng-change="buscandoSilabo($event, searchText)" placeholder="{{'buscarSilabo'| translate}}" />
                                     </div>
-                                    <!--<div class="col-md-3">
-                                        <h3 class="text-success" style="text-align: left">{{'seleccioneInstitucion'| translate}}:</h3>
-                                        <select class="form-control" name="board" id="institutionA" ng-change="buscandoSilabo($event, searchText)" ng-model="selectedInstitution"  ng-options="key.instID as key.instNAME for key  in institutionsFinal">
-                                            <option value="">Seleccione</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <h3 class="text-success" style="text-align: left">{{'dependencia'| translate}}:</h3>
-                                        <select   class="form-control" name="group" id="group" ng-change="buscandoSilabo($event, searchText)" ng-model="selectedDependencia" ng-options="key.depenID as key.depenNAME for key in dependenciasFinal" >
-                                            <option value="">Seleccione</option>
-                                        </select>
-                                    </div>
-                                    -->
-
-                                    <!--<div class="col-md-3">
-                                        <h3 class="text-success" style="text-align: left">{{'silabo'| translate}}:</h3>
-                                        <select   class="form-control" name="groupb" id="groupb" ng-model="selectedSilabo" ng-options="key.silaboID as key.silaboNAME for key in silabosFinal" >
-                                            <option value="">Seleccione</option>
-                                        </select>
-                                    </div>-->
                                 </div>
 
                                 <div  class="col-md-12" style="overflow: auto; height: 90%">
@@ -63,6 +52,7 @@
                                                 <th>Nombre</th>
                                                 <th>Dependencia</th>
                                                 <th>Institución</th>
+                                            </tr>    
                                         </thead>
                                         <tbody>
                                             <tr ng-repeat="silabo in silabos" ng-click="setSelectedSilabo($event, silabo)">
@@ -91,8 +81,106 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div> <!--fin DIV buscador-->
+                </div> <!--Fin Search Dialog-->
+
+
+
+                <!-- Inicia Add Dialogo, permite ingresar un silabo manualmente o cargar desde Excel-->
+                <div class="modal fade"  id="addDialog" tabindex="-1" role="dialog" aria-labelledby="Buscador de Sílabos" aria-hidden="true">
+                    <div class="modal-dialog  modal-md">
+                        <div class="modal-content" style = "overflow: auto; width: 900px; height: 500px">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                <h4 class="modal-title" id="myModalLabel">Ingresar datos del Sílabo</h4>
+                            </div>
+                            <div class="modal-body" >
+
+                                <div id="divloadexcel" style="padding: 1%; padding-bottom: 5%">
+                                    <div class="col-md-6" style="text-align: right">Cargar desde Excel 
+                                    </div>
+                                    <div class="col-md-6"><input type="file" id="inputExcel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+                                    </div>
+                                </div>   
+                                <div  class="col-md-12" style="overflow: auto;">
+                                    <table id="tablaLoadDataDialog" class="table table-striped " style="font-size: x-small; ">
+
+                                        <tbody id="contenidoAcademicoDeTabla">
+                                            <tr>
+                                                <td style="width: 10%">
+                                                    Título *
+                                                </td>
+                                                <td colspan="2" style="width: 55%">
+                                                    <input style="width: 100%" ng-model="addTitulo" ng-change="" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Descripción *
+                                                </td>
+                                                <td colspan="2">
+                                                    <textarea style="width: 100%"  ng-model="addDescripcion" ng-change=""></textarea>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    Objetivo *
+                                                </td>
+                                                <td colspan="2">
+                                                    <textarea style="width: 100%" ng-model="addObjetivo" ng-change=""></textarea>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Dependencia / Facultad
+                                                </td>
+                                                <td colspan="2">
+                                                    <input style="width: 100%" ng-model="addDependencia" ng-change="" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Institución
+                                                </td>
+                                                <td colspan="2">
+                                                    <input style="width: 100%" ng-model="addInstitucion" ng-change="" />
+                                                </td>
+                                            </tr>
+
+                                            <tr id="trcontenido">
+                                                <td>
+                                                    Capítulo 1 *
+                                                </td>
+                                                <td>
+                                                    <input style="width: 100%" ng-model="addCapitulo1" ng-change="" />
+                                                </td>
+                                                <td style="width: 11%">
+                                                    Subcapítulos 1
+                                                </td>
+                                                <td style="width: 35%">
+                                                    <input style="width: 100%" ng-model="addSubCapitulo1" ng-change="" /><br>
+                                                    <input style="width: 100%" ng-model="addSubCapitulo2" ng-change="" /><br>
+                                                    <input style="width: 100%" ng-model="addsubCapitulo3" ng-change="" /><br>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-default" ng-click="seleccionarSilabo()">Cargar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!--Fin Add Dialog-->
+            </div> 
+
+
+
+
+
             <div>
                 <div class="col-md-2">
                     <label>Titulo</label>
@@ -123,48 +211,34 @@
                         </tr>
                         <tr>
                             <td>Capítulos</td>
-                            <td><div style="overflow: auto; height: 120px"><li readonly ng-repeat="capitulo in silabotoShow['silaboCHAPTER']"> - {{capitulo['@value']}}</li></div></td>
+                            <td><div style="overflow: auto; height: 120px"><li readonly ng-repeat="capitulo in silabotoShow['silaboCHAPTER']"> - {{capitulo[0]}}</li></div></td>
                         </tr>
 
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div> 
     </div> <!--fin Seelección de silabo A-->
 
 
 
-    <p>
-    <hr>
+    <!--------------------------------- TERMINA acciones con silabo A, inicia acciones con silabo B---->
+
+
     <!--Selección de silabo B-->
     <div class="col-md-6" ng-controller="loadSyllabusB" >
         <h3 class="text-info" style="text-align: left">{{'silaboB'| translate}}:</h3>
         <div class="row" style="padding: 2%">
 
-            <!--     <div class="col-md-3">
-                     <h3 class="text-success" style="text-align: left">{{'seleccioneInstitucion'| translate}}:</h3>
-                     <select class="form-control" name="board" id="board" ng-model="selectedInstitution"  ng-options="key.instID as key.instNAME for key  in institutionsFinal">
-                         <option value="">Seleccione</option>
-                     </select>
-                 </div>
-     
-                 <div class="col-md-3">
-                     <h3 class="text-success" style="text-align: left">{{'dependencia'| translate}}:</h3>
-                     <select   class="form-control" name="group" id="group" ng-model="selectedDependencia" ng-options="key.depenID as key.depenNAME for key in dependenciasFinal" >
-                         <option value="">Seleccione</option>
-                     </select>
-                 </div>
-     
-                 <div class="col-md-3">
-                     <h3 class="text-success" style="text-align: left">{{'silabo'| translate}}:</h3>
-                     <select   class="form-control" name="groupb" id="group" ng-model="selectedSilabo" ng-options="key.silaboID as key.silaboNAME for key in silabosFinal" >
-                         <option value="">Seleccione</option>
-                     </select>
-                 </div>
-            -->
 
-            <div class="buscador col-md-12" style="padding-top: 2%" >
-                <button ng-click="searchDialog()">Buscar...</button>
+            <div class="col-md-12">
+
+
+                <div class="ingresar col-md-12"  style="padding: 2%">
+                    <button ng-click="searchDialog()">Buscar Sílabo...</button>
+                    <button ng-click="addDialog()">Ingresar Sílabo...</button>
+                </div>  
+
                 <div class="modal fade"  id="searchDialog2" tabindex="-1" role="dialog" aria-labelledby="Buscador de Sílabos" aria-hidden="true">
                     <div class="modal-dialog  modal-md">
                         <div class="modal-content" style = "width: 800px">
@@ -210,8 +284,103 @@
                             </div>
                         </div>
                     </div>
+                </div> <!--- fin searchDialog-->
+
+
+                <!-- Inicia Add Dialogo, permite ingresar un silabo manualmente o cargar desde Excel-->
+                <div class="modal fade"  id="addDialog2" tabindex="-1" role="dialog" aria-labelledby="Buscador de Sílabos" aria-hidden="true">
+                    <div class="modal-dialog  modal-md">
+                        <div class="modal-content" style = "overflow: auto; width: 900px; height: 500px">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                <h4 class="modal-title" id="myModalLabel">Ingresar datos del Sílabo</h4>
+                            </div>
+                            <div class="modal-body" >
+
+                                <div id="divloadexcel" style="padding: 1%; padding-bottom: 5%">
+                                    <div class="col-md-6" style="text-align: right">Cargar desde Excel 
+                                    </div>
+                                    <div class="col-md-6"><input type="file" id="inputExcel2" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+                                    </div>
+                                </div>   
+                                <div  class="col-md-12" style="overflow: auto;">
+                                    <table id="tablaLoadDataDialog2" class="table table-striped " style="font-size: x-small; ">
+
+                                        <tbody id="contenidoAcademicoDeTabla2">
+                                            <tr>
+                                                <td style="width: 10%">
+                                                    Título *
+                                                </td>
+                                                <td colspan="2" style="width: 55%">
+                                                    <input style="width: 100%" ng-model="addTitulo" ng-change="" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Descripción *
+                                                </td>
+                                                <td colspan="2">
+                                                    <textarea style="width: 100%"  ng-model="addDescripcion" ng-change=""></textarea>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    Objetivo *
+                                                </td>
+                                                <td colspan="2">
+                                                    <textarea style="width: 100%" ng-model="addObjetivo" ng-change=""></textarea>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Dependencia / Facultad
+                                                </td>
+                                                <td colspan="2">
+                                                    <input style="width: 100%" ng-model="addDependencia" ng-change="" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Institución
+                                                </td>
+                                                <td colspan="2">
+                                                    <input style="width: 100%" ng-model="addInstitucion" ng-change="" />
+                                                </td>
+                                            </tr>
+
+                                            <tr id="trcontenido2">
+                                                <td>
+                                                    Capítulo 1 *
+                                                </td>
+                                                <td>
+                                                    <input style="width: 100%" ng-model="addCapitulo1" ng-change="" />
+                                                </td>
+                                                <td style="width: 11%">
+                                                    Subcapítulos 1
+                                                </td>
+                                                <td style="width: 35%">
+                                                    <input style="width: 100%" ng-model="addSubCapitulo1" ng-change="" /><br>
+                                                    <input style="width: 100%" ng-model="addSubCapitulo2" ng-change="" /><br>
+                                                    <input style="width: 100%" ng-model="addsubCapitulo3" ng-change="" /><br>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-default" ng-click="seleccionarSilabo()">Cargar</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div> <!--fin DIV buscador-->
+
+
+
+            </div> 
 
             <div>
                 <div class="col-md-2">
@@ -230,7 +399,7 @@
                         </tr>
                         <tr>
                             <td>Objetivos</td>
-                            <td><div style="overflow: auto; height: 80px"><li readonly ng-repeat="objetivo in silabotoShow['silaboOBJETIVO']"> - {{objetivo['@value']}}</li></div></td>
+                            <td><div style="overflow: auto; height: 80px"><li readonly ng-repeat="objetivo in silabotoShow['silaboOBJETIVO']"> - {{objetivo["@value"]}}</li></div></td>
                         </tr>
                         <tr>
                             <td>Institución</td>
@@ -242,7 +411,7 @@
                         </tr>
                         <tr>
                             <td>Capítulos</td>
-                            <td><div style="overflow: auto; height: 120px"><li readonly ng-repeat="capitulo in silabotoShow['silaboCHAPTER']"> - {{capitulo['@value']}}</li></div></td>
+                            <td><div style="overflow: auto; height: 120px"><li readonly ng-repeat="capitulo in silabotoShow['silaboCHAPTER']"> - {{capitulo[0]}}</li></div></td>
                         </tr>
 
                     </tbody>
@@ -250,7 +419,7 @@
             </div>
 
         </div>
-    </div> <!--fin Seelección de silabo B-->
+    </div> <!--fin Acciones de silabo B-->
 
 
     <div id="scrollToCalc" class="col-md-12" style="text-align: center; padding: 5%" ng-controller="calcSimilarity">
@@ -258,7 +427,7 @@
             <button type="button" class="btn btn-primary" ng-click="ifClick()">Calcular Similitud</button>
         </div>
         <div id="scrollToValue" class="col-md-12 text-success" style="display: none; padding-top: 30px; ">
-            <h1>{{similitudFinal[0]["similitudValue"]}}</h1>
+            <h1>{{similitudFinal["similitudValue"]}}</h1>
         </div>
     </div>
 

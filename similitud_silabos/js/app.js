@@ -15,14 +15,19 @@ var similitudApp = angular.module('similitudApp', [
 
 
 similitudApp.service('temporalData', function () {
-    this.selectedSyllabusA = "";
-    this.selectedSyllabusB = "";
+    this.selectedSyllabusID_A = "";
+    this.selectedSyllabusID_B = "";
 
     this.selectedDependenciaA = "";
     this.selectedDependenciaB = "";
     this.selectedInstitucionA = "";
     this.selectedInstitucionB = "";
-    this.temporalDependencias= []
+    this.temporalDependencias = [];
+    this.silaboAlmacenadoA = [];
+    this.silaboAlmacenadoB = [];
+    this.silaboIngresadoA = [];
+    this.silaboIngresadoB = [];
+    
 
 });
 similitudApp.service('searchData', function () {
@@ -98,10 +103,12 @@ similitudApp.service('globalData', function () {
             + '                 <{0}> ies:faculty ?nameDependencia. '
             + '                 <{0}> ies:has_institution ?institucion. '
             + '                 <{0}> ies:institution ?nameInstitucion. '
-            + '                 <{0}> ies:has_chapter ?nameCapitulo. '
-            + '  }'
+            + '                 <{0}> ies:has_content ?capitulos.   '
+            + '                 ?capitulos ies:has_cap ?nameCapitulo. '
+            + '                 ?capitulos ies:has_sub ?nameSubcapitulo ' 
+            + ' }'
             + ' WHERE { '
-            + '     SELECT DISTINCT ?silabo ?nameCapitulo  ?title ?objetivo ?descripcion ?dependencia ?institucion ?nameDependencia ?nameInstitucion WHERE {   '
+            + '     SELECT DISTINCT ?silabo ?nameCapitulo ?nameSubcapitulo ?capitulos ?title ?objetivo ?descripcion ?dependencia ?institucion ?nameDependencia ?nameInstitucion WHERE {   '
             + '         <{0}>      aiiso:description  ?descripcion. '
             + '         <{0}>      ies:objective      ?objetivo. '
             + '         <{0}>      ies:belonging_to   ?dependencia. '
@@ -113,11 +120,46 @@ similitudApp.service('globalData', function () {
             + '         ?subject     ies:name ?title . '
             + '         <{0}>      ies:abarca  ?contenido. '
             + '         ?contenido a <http://ies.linkeddata.ec/vocabulary/ContenidoAcademico>. '
-            + '         ?contenido  ies:abarca ?capitulos. ' 
+            + '         ?contenido  ies:abarca ?capitulos. '
             + '         ?capitulos rdfs:label ?nameCapitulo.  '
+            + '         ?capitulos ies:has_subchapter ?subcap. '
+            + '         ?subcap ies:name ?nameSubcapitulo. '  //PROBAR esta consulta 
             + '     }'
             + ' } ';
 
+    this.silabos_json =''
+            +'['
+            +'   {'
+            + '    "id":1,'
+            + '    "title":"{0}",'
+            + '    "description":"{1}",'
+            + '    "contenido":['
+            + '        {2}'
+            + '     ]'
+            + '  },'
+            + '  {'
+            + '     "id":2,'
+            + '     "title":"{3}",'
+            + '     "description":"{4}",'
+            + '     "contenido":['
+            + '         {5}'
+            + '     ]'
+            + '  }'
+            + ']';
+
+    this.capitulos_json = ''
+            +'{'
+            + '  "id":{0},'
+            + '  "title":"{1}",'
+            + '  "subchapter":['
+            + '     {2}'
+            + '   ]'
+            + '}';
+    this.subcapitulos_json = ''
+            +'{'
+            + '  "id":{0},'
+            + '  "title":"{1}"'
+            + '}';
 
 });
 
@@ -186,7 +228,7 @@ similitudApp.config(['$routeProvider',
                 }).
                 when('/:lang/cepraxi/navegar', {
                     templateUrl: '/similitud_silabos/partials/similitudNavegar.html'
-                }).        
+                }).
 //                .
                 /*when('/phones/:phoneId', {
                  templateUrl: 'partials/phone-detail.html',

@@ -157,11 +157,11 @@ similitudControllers.controller('loadSyllabusB', ['$translate', '$routeParams', 
 
 
         $scope.$watch('selectedSilabo', function () {
-            temporalData.selectedSyllabusB = $scope.selectedSilabo;
+            temporalData.selectedSyllabusID_B = $scope.selectedSilabo;
         });
 
         $scope.buscandoSilabo = function ($event, texto) {
-           
+
             var institucionFilter = temporalData.selectedInstitucion ? temporalData.selectedInstitucion : "";
             var dependenciaFilter = temporalData.selectedDependencia ? temporalData.selectedDependencia : "";
             var query = String.format(globalData.querySilabos, texto);
@@ -210,20 +210,40 @@ similitudControllers.controller('loadSyllabusB', ['$translate', '$routeParams', 
                     if (compacted)
                     {
                         var model = {};
-                        //model["Publication"] = pub["foaf:publications"]["@id"];
-                        model["silabo"] = compacted["@id"];
-                        model["name"] = compacted["rdfs:label"]["@value"];
-                        model["description"] = compacted["aiiso:description"]["@value"];
-                        model["objective"] = compacted["ies:objective"]
-                        model["dependenciaID"] = compacted["ies:belonging_to"]["@id"];
-                        model["dependencia"] = compacted["ies:faculty"]["@value"];
-                        model["institucionID"] = compacted["ies:has_institution"]["@id"];
-                        model["institucion"] = compacted["ies:institution"]["@value"];
-                        var objetivos = [];
-                        objetivos.push(compacted["ies:objective"]);
-                        model["objective"] = compacted["ies:objective"].length > 1 ? compacted["ies:objective"]: objetivos;
-                        model["chapter"] = compacted["ies:has_chapter"];
-                        fullSilabo.push({silaboID: model["silabo"], silaboCHAPTER: model["chapter"], silaboOBJETIVO: model["objective"], silaboDESCRIPCION: model["description"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboDEPENDENCIAID: model["dependenciaID"], silaboINSTITUCION: model["institucion"], silaboINSTITUCIONID: model["institucionID"]});
+                        var contenido = [];
+
+                        _.map(compacted["@graph"], function (silb) {
+
+                            if (silb["@id"] == setSelectedSilabo["silaboID"])
+                            {
+                                //model["Publication"] = pub["foaf:publications"]["@id"];
+                                model["silabo"] = silb["@id"];
+                                model["name"] = silb["rdfs:label"]["@value"];
+                                model["description"] = silb["aiiso:description"]["@value"];
+                                model["objective"] = silb["ies:objective"]
+                                model["dependenciaID"] = silb["ies:belonging_to"]["@id"];
+                                model["dependencia"] = silb["ies:faculty"]["@value"];
+                                model["institucionID"] = silb["ies:has_institution"]["@id"];
+                                model["institucion"] = silb["ies:institution"]["@value"];
+                                var objetivos = [];
+                                objetivos.push(silb["ies:objective"]);
+                                model["objective"] = silb["ies:objective"].length > 1 ? silb["ies:objective"] : objetivos;
+                            } else
+                            {
+                                var capitulo = [];
+                                capitulo.push(silb["ies:has_cap"]["@value"]);
+                                for (var i = 0; i < silb["ies:has_sub"].length; i++)
+                                {
+                                    capitulo.push(silb["ies:has_sub"][i]);
+                                }
+                                contenido.push(capitulo);
+                            }
+
+                        });
+                        model["chapter"] = contenido;
+                        fullSilabo = {silaboID: model["silabo"], silaboCHAPTER: model["chapter"], silaboOBJETIVO: model["objective"], silaboDESCRIPCION: model["description"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboDEPENDENCIAID: model["dependenciaID"], silaboINSTITUCION: model["institucion"], silaboINSTITUCIONID: model["institucionID"]};
+                        temporalData.silaboAlmacenadoB = fullSilabo;
+                        temporalData.selectedSyllabusID_B = setSelectedSilabo["silaboID"];
                         applyFullSilabo(fullSilabo);
                         waitingDialog.hide();
                     } else//no retrieve data
@@ -234,23 +254,151 @@ similitudControllers.controller('loadSyllabusB', ['$translate', '$routeParams', 
                 }); //end jsonld.compact
             }); //end sparqlService
 
-            temporalData.selectedSyllabusB = setSelectedSilabo["silaboID"];
             $('html,body').animate({
                 scrollTop: $("#scrollToCalc").offset().top
             }, "slow");
         };
-        
+
         function applyFullSilabo(fullSilabo)
         {
-            $scope.$apply(function () {
-                $scope.silabotoShow = fullSilabo[0];
+            $scope.safeApply(function () {
+                $scope.silabotoShow = fullSilabo;
             });
         }
-        
+
+
+        ////////////////////////////////////////////////
+        //////////PROCESO PARA CARGAR DATOS DE SILABOS MANUALMENTE O CARGAR DESDE EXCEL////
+        ////////////////////////////////////////////////
+
+
+
+        $scope.seleccionarSilabo = function ($event) { //el usuario ha ingresado los datos de un silabo manualmente o ha cargado un excel
+            //obtenerSimilitud();
+            var fullSilabo = [];
+            var datosContenido = $scope.datosContenidoTemporal;
+
+            var capitulos = [];
+            //var capitulo = {};
+            for (var i = 1; i < datosContenido.length; i++)
+            {
+                var capitulo = {};
+                capitulo["@value"] = datosContenido[i][0];
+                capitulos.push(capitulo);
+
+            }
+
+            fullSilabo = {silaboID: "0000", silaboCHAPTER: datosContenido, silaboOBJETIVO: $scope.addObjetivo, silaboDESCRIPCION: $scope.addDescripcion, silaboNAME: $scope.addTitulo, silaboDEPENDENCIA: $scope.addDependencia, silaboDEPENDENCIAID: "0000", silaboINSTITUCION: $scope.addInstitucion, silaboINSTITUCIONID: "0000"};
+
+            //se almacena temporalmente para enviar a calcular la similitud.
+            temporalData.silaboIngresadoB = fullSilabo;
+
+            //para saber que es un sílabo que no se encuentra en el repositorio.
+            temporalData.selectedSyllabusID_B = "0000";
+
+
+            applyFullSilabo(fullSilabo);
+            $('#addDialog2').modal('hide');
+            $('#contenidoB').css('display', '');
+
+        };
+
+        document.getElementById('inputExcel2').addEventListener("change", function (e) {
+            cargarExcel(e);
+        });
+        function cargarExcel(e) {
+            // do some asynchronous work
+            // and when the asynchronous stuff is complete
+
+            var files = e.target.files, file;
+            if (!files || files.length == 0)
+                return;
+            file = files[0];
+            var File;
+            var fileReader = new FileReader();
+            fileReader.onload = function (e) {
+                var filename = file.name;
+                // call 'xlsx' to read the file
+                var binary = "";
+                var bytes = new Uint8Array(e.target.result);
+                var length = bytes.byteLength;
+                for (var i = 0; i < length; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                File = XLSX.read(binary, {type: 'binary', cellDates: true, cellStyles: true});
+            };
+            fileReader.readAsArrayBuffer(file);
+            setTimeout(function () {
+                var datos = File["Strings"];
+                extrayendoDatosDeExcel(datos);
+            }, 1000);
+        }
+        ;
+        function extrayendoDatosDeExcel(datos) {
+            var allData = readFromExcel($scope, datos);
+
+
+            //lo siguiente es para mostrar en pantalla, creando el html necesario
+            var datosGenerales = allData["datosGenerales"];
+            var datosContenido = allData["datosContenido"];
+            $scope.datosContenidoTemporal = datosContenido;
+
+            $scope.$apply(function () {
+                $scope.addTitulo = datosGenerales[0];
+                $scope.addDescripcion = datosGenerales[1];
+                $scope.addDependencia = datosGenerales[2];
+
+            });
+
+            //aqui se crean los input para los capitulos y subcapitulos.
+            var infoContenido = $('#contenidoAcademicoDeTabla2');
+            var trContenido = $('#trcontenido2');
+            trContenido.html('');
+
+            for (var i = 0; i < datosContenido.length; i++)
+            {
+                datosContenido[i][0];
+                var tr = $('<tr>');
+                var td = $('<td>');
+                var capituloTd = $('<td>').text('Capítulo ' + (i + 1) + ' *');
+                //var capituloInput = $('<input style="width: 100%" ng-model="addCapitulo' + (i + 1) + '" ng-change="" value="' + datosContenido[i][0] + '"/><br>');
+                var capituloInput = $('<input style="width: 100%" ng-model="addCapitulo[' + (i) + '][0]" ng-change="" value="' + datosContenido[i][0] + '"/><br>');
+                td.append(capituloInput);
+                tr.append(capituloTd); //col1
+                tr.append(td); //col2
+                var subCapituloTd = $('<td style="width: 11%"> ').text('SubCapítulos ' + (i + 1));
+                tr.append(subCapituloTd); //col3
+                var td = $('<td style="width: 35%">');
+                for (var j = 1; j < datosContenido[i].length; j++)
+                {
+                    //var subCapituloInput = $('<input style="width: 100%" ng-model="addSubCapitulo' + (i + 1) + '" ng-change="" value="' + datosContenido[i][j] + '" /><br>');
+                    var subCapituloInput = $('<input style="width: 100%" ng-model="addCapitulo[' + (i) + '][' + (j) + ']" ng-change="" value="' + datosContenido[i][j] + '" /><br>');
+                    td.append(subCapituloInput);
+                }
+                tr.append(td); //col4
+                infoContenido.append(tr);
+            }
+        }
+        ;
+
+
+
+
+        ////////////////////////////////////////////////
+        //////////FIN DEL PROCESO PARA CARGAR DATOS DE SILABOS MANUALMENTE O CARGAR DESDE EXCEL////
+        ////////////////////////////////////////////////
+
+
+
+
+
+
         $scope.searchDialog = function () {
             $('#searchDialog2').modal('show');
         };
-
+        $scope.addDialog = function () {
+            $('#addDialog2').modal('show');
+        };
 
         $scope.safeApply = function (fn) {
             var phase = this.$root.$$phase;
