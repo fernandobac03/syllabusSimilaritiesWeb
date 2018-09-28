@@ -103,6 +103,14 @@ myApp.labels_es = {
 ,"dependencia": "Seleccione la Dependencia"
 ,"silabo": "Seleccione el sílabo"
 ,"buscarSilabo": "Buscar sílabo"
+,"silaboCREACION": "Fecha de creación"
+, "silaboCREDITOS": "Créditos"
+, "silaboCHAPTER": "Capítulos"
+, "silaboOBJETIVO": "Objetivos"
+, "silaboDESCRIPCION": "Descripción"
+, "silaboNAME": "Título de la Asignatura"
+, "silaboDEPENDENCIA": "Unidad Académica"
+, "silaboINSTITUCION": "Institución"
 //,"": ""
 
 };

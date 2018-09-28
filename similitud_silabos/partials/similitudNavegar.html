@@ -1,143 +1,93 @@
-<div id="scrollToTop">
-</div> 
-<hr>
-<hr>
-<div ng-controller="exportController">
-
-
-    <div class="col-md-12">
-
-        <center>
-            <div class="page-header">
-                <h2 class="text-primary">Navegar</h2>
-            </div>
-        </center>
-    </div>
+<div ng-controller="translate">
     <div class="col-md-12" ng-controller="similitudNavegarA" >
-        <div  > <!--Seleccionando Silabo A-->
-            <div class="col-md-3">
-                <h3 class="text-primary" style="text-align: left">{{'seleccioneInstitucion'| translate}}:</h3>
-                <select class="form-control" name="board" id="institutionA" ng-model="selectedInstitutionA"  ng-options="key.instID as key.instNAME for key  in institutionsFinal" >
-                    <option value="">Seleccione</option>
-                </select>
-            </div>
-
-            <div class="col-md-4">
-                <h3 class="text-primary" style="text-align: left">{{'dependencia'| translate}}:</h3>
-                <select   class="form-control" name="group" id="group" ng-model="selectedDependenciaA" ng-options="key.depenID as key.depenNAME for key in dependenciasFinalA" >
-                    <option value="">Seleccione</option>
-                    <!--            <option value="name">Autor</option> -->
-                </select>      
-
-            </div>
-
-            <div class="col-md-5">
-                <h3 class="text-primary" style="text-align: left">{{'silabo'| translate}}:</h3>
-                <select   class="form-control" name="groupb" id="groupb" ng-model="selectedSilaboA" ng-options="key.silaboID as key.silaboNAME for key in silabosFinalA" >
-                    <option value="">Seleccione</option>
-                </select>
-            </div>
-        </div><!--Fin seleccionando silabo A-->
-        <div  class="col-md-12" style="padding: 20px;">
-            <p>
-                <a id="otrosilabo" class="text-light bg-primary" ng-click="if_B()" style="padding: 10px; display: none">Click para seleccionar otro Sílabo y comparar</a>
-            </p>
-        </div>
-        <div id="seleccionandoB" style="display: none"><!--Seleccionando silabo B-->
-            <div class="col-md-3">
-                <h3 class="text-primary" style="text-align: left">{{'seleccioneInstitucion'| translate}}:</h3>
-                <select class="form-control" name="board" id="board" ng-model="selectedInstitutionB"  ng-options="key.instID as key.instNAME for key  in institutionsFinal">
-                    <option value="">Seleccione</option>
-                </select>
-            </div>
-
-            <div class="col-md-4">
-                <h3 class="text-primary" style="text-align: left">{{'dependencia'| translate}}:</h3>
-                <select   class="form-control" name="group" id="group" ng-model="selectedDependenciaB" ng-options="key.depenID as key.depenNAME for key in dependenciasFinalB" >
-                    <option value="">Seleccione</option>
-                    <!--            <option value="name">Autor</option> -->
-                </select>
-            </div>
-
-            <div class="col-md-5">
-                <h3 class="text-primary" style="text-align: left">{{'silabo'| translate}}:</h3>
-                <select   class="form-control" name="groupb" id="group" ng-model="selectedSilaboB" ng-options="key.silaboID as key.silaboNAME for key in silabosFinalB" >
-                    <option value="">Seleccione</option>
-                </select>
-            </div>
-        </div> <!--fin seleccionando silabo B-->
-
+        <div id="scrollToTop">
+        </div> 
         <hr>
-        <!--mostrando silabo A-->
-        <div id="contenidoNavegarA" class="contenido center col-md-6" style="display: none">
-            <table class="table table-striped ">
-                <tbody>
-                    <tr>
-                        <td>Titulo: </td>
-                        <td>{{showSilaboA['silaboNAME']}}</td>
-                    </tr>
-                    <tr>
-                        <td>Descripción: </td>
-                        <td><textarea readonly class="form-control" rows="6" id="comment">{{showSilaboA['silaboDESCRIPCION']}}</textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Objetivos: </td>
-                        <td><div style="overflow: auto; height: 150px"><li readonly ng-repeat="objetivo in showSilaboA['silaboOBJETIVO']"> - {{objetivo['@value']}}</li></div></td>
-                    </tr>
-                    <tr>
-                        <td>Institución: </td>
-                        <td>{{showSilaboA['silaboINSTITUCION']}}</td>
-                    </tr>
-                    <tr>
-                        <td>Dependencia: </td>
-                        <td>{{showSilaboA['silaboDEPENDENCIA']}}</td>
-                    </tr>
-                    <tr>
-                        <td>Capítulos</td>
-                        <td><div style="overflow: auto; height: 150px"><li readonly ng-repeat="capitulo in showSilaboA['silaboCHAPTER']"> - {{capitulo['@value']}}</li></div></td>
-                    </tr>
-
-                </tbody>
-            </table>
-        </div><!-- Fin Mostrando silabo A-->
-
         <hr>
-        <div id="contenidoNavegarB" class="contenido center col-md-6" style="display: none">
-            <table class="table table-striped ">
-                <tbody>
-                    <tr>
-                        <td>Titulo: </td>
-                        <td>{{showSilaboB['silaboNAME']}}</td>
-                    </tr>
-                    <tr>
-                        <td>Descripción: </td>
-                        <td><textarea readonly class="form-control" rows="6" id="comment">{{showSilaboB['silaboDESCRIPCION']}}</textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Objetivos: </td>
-                        <td><div style="overflow: auto; height: 150px"><li readonly ng-repeat="objetivo in showSilaboB['silaboOBJETIVO']"> - {{objetivo['@value']}}</li></div></td>
-                    </tr>
-                    <tr>
-                        <td>Institución: </td>
-                        <td>{{showSilaboB['silaboINSTITUCION']}}</td>
-                    </tr>
-                    <tr>
-                        <td>Dependencia: </td>
-                        <td>{{showSilaboB['silaboDEPENDENCIA']}}</td>
-                    </tr>
-                    <tr>
-                        <td>Capítulos</td>
-                        <td><div style="overflow: auto; height: 150px"><li readonly ng-repeat="capitulo in showSilaboB['silaboCHAPTER']"> - {{capitulo['@value']}}</li></div></td>
-                    </tr>
 
-                </tbody>
-            </table>
-        </div><!-- Fin Mostrando silabo B-->
 
-        <div id="scrollToValue" class="center col-md-12 text-success" style="padding-top: 30px; display: none ">
-            <h1>Similitud:  {{similitudFinal[0]["similitudValue"]}}</h1>
+
+        <div class="col-md-12">
+
+            <center>
+                <div class="page-header">
+                    <h2 class="text-primary">Navegar</h2>
+                </div>
+            </center>
         </div>
+        <div class="col-md-12" >
+            <div  > <!--Seleccionando Silabo A-->
+                <div class="col-md-3">
+                    <h3 class="text-primary" style="text-align: left">{{'seleccioneInstitucion'| translate}}:</h3>
+                    <select class="form-control" name="board" id="institutionA" ng-model="selectedInstitutionA"  ng-options="key.instID as key.instNAME for key  in institutionsFinal| orderBy:'instNAME'" >
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
 
+                <div class="col-md-4">
+                    <h3 class="text-primary" style="text-align: left">{{'dependencia'| translate}}:</h3>
+                    <select   class="form-control" name="group" id="group" ng-model="selectedDependenciaA" ng-options="key.depenID as key.depenNAME for key in dependenciasFinalA| orderBy:'depenNAME'" >
+                        <option value="">Seleccione</option>
+                        <!--            <option value="name">Autor</option> -->
+                    </select>      
+
+                </div>
+
+                <div class="col-md-5">
+                    <h3 class="text-primary" style="text-align: left">{{'silabo'| translate}}:</h3>
+                    <select   class="form-control" name="groupb" id="groupb" ng-model="selectedSilaboA" ng-options="key.silaboID as (key.silaboNAME +     ' --- Creado en: ' +      key.silaboCREATION) for key in silabosFinalA| orderBy:['silaboNAME', 'silaboCREATION']" >
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
+            </div><!--Fin seleccionando silabo A-->
+            <div  class="col-md-12" style="padding: 20px;">
+                <p>
+                    <a id="otrosilabo" class="text-light bg-primary" ng-click="if_B()" style="padding: 10px; display: none">Click para seleccionar otro Sílabo y comparar</a>
+                </p>
+            </div>
+            <div id="seleccionandoB" style="display: none"><!--Seleccionando silabo B-->
+                <div class="col-md-3">
+                    <h3 class="text-primary" style="text-align: left">{{'seleccioneInstitucion'| translate}}:</h3>
+                    <select class="form-control" name="board" id="board" ng-model="selectedInstitutionB"  ng-options="key.instID as key.instNAME for key  in institutionsFinal| orderBy:'instNAME'">
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <h3 class="text-primary" style="text-align: left">{{'dependencia'| translate}}:</h3>
+                    <select   class="form-control" name="group" id="group" ng-model="selectedDependenciaB" ng-options="key.depenID as key.depenNAME for key in dependenciasFinalB| orderBy:'depenNAME'" >
+                        <option value="">Seleccione</option>
+                        <!--            <option value="name">Autor</option> -->
+                    </select>
+                </div>
+
+                <div class="col-md-5">
+                    <h3 class="text-primary" style="text-align: left">{{'silabo'| translate}}:</h3>
+                    <select   class="form-control" name="groupb" id="group" ng-model="selectedSilaboB" ng-options="key.silaboID as (key.silaboNAME +     ' --- Creado en: ' +      key.silaboCREATION) for key in silabosFinalB| orderBy:['silaboNAME', 'silaboCREATION']" >
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
+            </div> <!--fin seleccionando silabo B-->
+
+            <hr>
+            <div>
+                <!--mostrando silabo A-->
+                <div class="col-md-6">
+                    <sil-table data="dataA"></sil-table> 
+                </div>
+                <!-- Fin Mostrando silabo A-->
+
+                <div class="col-md-6">
+                    <sil-table data="dataB"></sil-table> 
+                </div>
+                <!-- Fin Mostrando silabo B-->
+            </div>
+            <div id="scrollToValue" class="center col-md-12 text-success" style="padding-top: 30px; display: none ">
+                <h1>Similitud:  {{similitudFinal[0]["similitudValue"]}}</h1>
+            </div>
+
+        </div>
+    </div>
 </div>
 
 

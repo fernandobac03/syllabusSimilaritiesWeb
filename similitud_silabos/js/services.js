@@ -9,8 +9,8 @@ var similitudServices = angular.module('similitudServices', ['ngResource']);
 //wkhomeServices.serverInstance = 'http://190.15.141.85:80';
 //wkhomeServices.serverInstance = 'http://localhost:8080/marmotta';
 //for parliament triplestore test
-similitudServices.serverInstance = 'http://172.17.0.4:8089/parliament';
-similitudServices.similarityService = 'http://172.17.0.3:5000/ucuenca/syllabus/full_similarity_detected';
+similitudServices.serverInstance = 'http://172.17.0.3:8089/parliament';
+similitudServices.similarityService = 'http://172.17.0.5:5000/ucuenca/syllabus/full_similarity_detected';
 
 
 /* Sample of a RESTful client Service */
