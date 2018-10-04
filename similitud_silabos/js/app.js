@@ -69,8 +69,7 @@ similitudApp.service('globalData', function () {
             + ' PREFIX uc: <http://ucuenca.edu.ec/ontology#>  '
             + ' PREFIX mm: <http://marmotta.apache.org/vocabulary/sparql-functions#> '
             + ' PREFIX ies: <http://ies.linkeddata.ec/syllabusOntology/vocabulary#> '
-            + ' PREFIX aiiso: <http://purl.org/vocab/aiiso/schema#> '
-            ;
+            + ' PREFIX aiiso: <http://purl.org/vocab/aiiso/schema#> ' ;
 
     this.querySilabos = this.PREFIX
             + 'CONSTRUCT { '
@@ -169,27 +168,27 @@ similitudApp.service('globalData', function () {
                     + '     } '
                     + ' } ';
 
-    this.silabos_json =''
+    
+    this.silabos_template =''
             +'['
             +'   {'
             + '    "id":1,'
-            + '    "title":"{0}",'
-            + '    "description":"{1}",'
-            + '    "contenido":['
-            + '        {2}'
-            + '     ]'
+            + '     {0} '
             + '  },'
             + '  {'
             + '     "id":2,'
-            + '     "title":"{3}",'
-            + '     "description":"{4}",'
-            + '     "contenido":['
-            + '         {5}'
-            + '     ]'
+            + '     {1} '
             + '  }'
             + ']';
 
-    this.capitulos_json = ''
+    this.campos_template = '"{0}":"{1}"';
+    this.lista_template = '"{0}": [ '
+                                  +    '  {1} ' 
+                                  +    ']';
+    this.contenido_template = '"content":   [ ' 
+                                    + '    {0} ' 
+                                    + ' ] ';
+    this.full_capitulos_template = ''
             +'{'
             + '  "id":{0},'
             + '  "title":"{1}",'
@@ -197,10 +196,16 @@ similitudApp.service('globalData', function () {
             + '     {2}'
             + '   ]'
             + '}';
-    this.subcapitulos_json = ''
+    this.capitulos_template = ''
             +'{'
             + '  "id":{0},'
             + '  "title":"{1}"'
+            + '}';
+    
+    this.items_template = ''
+            +'{'
+            + '  "id":{0},'
+            + '  "desc":"{1}"'
             + '}';
 
 });

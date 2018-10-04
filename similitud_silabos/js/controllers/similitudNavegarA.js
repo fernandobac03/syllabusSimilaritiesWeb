@@ -18,14 +18,14 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
             // es por eso que por el momento se le colocará manualmente el ID y LABEL de la unica institución existente
             var queryInstitutions = globalData.PREFIX
 
-                    + ' CONSTRUCT {?institucion aiiso:name  ?nameinstitucion }'
-                    + ' WHERE {'
+                    + ' CONSTRUCT {?institucion aiiso:name  ?nameinstitucion } '
+                    + ' WHERE { '
                     + '     SELECT DISTINCT ?institucion ?nameinstitucion  '
-                    + '         WHERE {'
-                    + '             ?institucion a aiiso:Institution .'
-                    + '             ?institucion aiiso:name ?nameinstitucion'
+                    + '         WHERE { '
+                    + '             ?institucion a aiiso:Institution . '
+                    + '             ?institucion aiiso:name ?nameinstitucion '
                     + '         } '
-                    + ' }';
+                    + ' } ';
             sparqlQuery.querySrv({query: queryInstitutions}, function (rdf) {
                 //   waitingDialog.show();
                 jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
@@ -286,13 +286,14 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
         }
 
 
-        function mostrarFullSilaboMapping(compacted, silaboID)
+        function fullSilaboMapping(compacted, silaboID)
         {
             var fullSilabo = {};
+             var model = {};
+               
             if (compacted["@graph"])
             {
                 var contenido = [];
-                var model = {};
                 _.map(compacted["@graph"], function (silabo) {
                     if (silabo["@id"] == silaboID)
                     {
@@ -324,10 +325,8 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
                     }
                     model["chapter"] = contenido;
                 });
-                fullSilabo = {silaboID: model["silabo"], silaboCREACION: model["creacion"], silaboCREDITOS: model["creditos"], silaboCHAPTER: model["chapter"], silaboOBJETIVO: model["objective"], silaboDESCRIPCION: model["description"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboDEPENDENCIAID: model["dependenciaID"], silaboINSTITUCION: model["institucion"], silaboINSTITUCIONID: model["institucionID"]};
             } else
             {
-                var model = {};
                 var contenido = [];
                 model["silabo"] = compacted["@id"];
                 model["name"] = compacted["aiiso:name"]["@value"];
@@ -343,13 +342,20 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
                 objetivos.push(compacted["ies:objective"]);
                 model["objective"] = compacted["ies:objective"].length > 1 ? compacted["ies:objective"] : objetivos;
                 var capitulo = [];
-                capitulo.push("No se encontró contenido académico")
+                capitulo.push("No se ha encontrado contenido académico")
                 contenido.push(capitulo)
                 model["chapter"] = contenido;
-                fullSilabo = {silaboID: model["silabo"], silaboCREACION: model["creacion"], silaboCREDITOS: model["creditos"], silaboCHAPTER: model["chapter"], silaboOBJETIVO: model["objective"], silaboDESCRIPCION: model["description"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboDEPENDENCIAID: model["dependenciaID"], silaboINSTITUCION: model["institucion"], silaboINSTITUCIONID: model["institucionID"]};
-
             }
-            return  {schema: {fields: [ "silaboNAME", "silaboDESCRIPCION", "silaboOBJETIVO", "silaboCHAPTER", "silaboDEPENDENCIA", "silaboINSTITUCION", "silaboCREACION", "silaboCREDITOS"]}, data: fullSilabo};
+            fullSilabo = {id: model["silabo"], creacion: model["creacion"], 
+                          creditos: model["creditos"], content: model["chapter"], 
+                          objectives: model["objective"], description: model["description"], 
+                          name: model["name"], dependencia: model["dependencia"], 
+                          dependenciaID: model["dependenciaID"], institucion: model["institucion"], 
+                          institucionID: model["institucionID"]};
+            return  {schema: {fields: ["name", "description", "objectives", "content", 
+                                       "dependencia", "institucion", "creacion", "creditos"], 
+                              fields_to_compare: ["name", "description", "objectives", "content"]}, 
+                     data: fullSilabo};
         }
         function mostrarFullSilaboA(silaboID)
         {
@@ -359,8 +365,8 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
                 jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
                     if (compacted)
                     {
-                        fullSilaboData = mostrarFullSilaboMapping(compacted, silaboID);
-                        applyFullSilaboA(fullSilaboData);
+                        fullSilaboData = fullSilaboMapping(compacted, silaboID);
+                        applyFullSilaboA(silaboID, fullSilaboData);
                         waitingDialog.hide();
                     } else//no retrieve data
                     {
@@ -380,8 +386,8 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
                 jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
                     if (compacted)
                     {
-                        fullSilaboData = mostrarFullSilaboMapping(compacted, silaboID);
-                        applyFullSilaboB(fullSilaboData);
+                        fullSilaboData = fullSilaboMapping(compacted, silaboID);
+                        applyFullSilaboB(silaboID, fullSilaboData);
                         waitingDialog.hide();
                     } else//no retrieve data
                     {
@@ -394,19 +400,25 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
         ; //Fin mostrarFullSilaboB
 
 
-        function applyFullSilaboA(fullSilaboData)
+        function applyFullSilaboA(silaboID, fullSilaboData)
         {
             $scope.$apply(function () {
                 // $scope.showSilaboA = fullSilabo[0];
                 $scope.dataA = fullSilaboData;
+                $scope.labelA = "Silabo A";
+                temporalData.selectedSyllabusID_A = silaboID;
+                temporalData.silaboAlmacenadoA = fullSilaboData;
             });
         }
         ;
-        function applyFullSilaboB(fullSilaboData)
+        function applyFullSilaboB(silaboID, fullSilaboData)
         {
             $scope.$apply(function () {
                 // $scope.showSilaboB = fullSilabo;
                 $scope.dataB = fullSilaboData;
+                $scope.labelB = "Silabo B";
+                temporalData.selectedSyllabusID_B = silaboID;
+                temporalData.silaboAlmacenadoB = fullSilaboData;
             });
         }
         ;
@@ -414,14 +426,14 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
             waitingDialog.show("Calculando Similitud");
             var querySimilitud = globalData.PREFIX
 
-                    + ' CONSTRUCT {?temporalResource <http://ies.linkeddata.ec/vocabulary#value>  ?value }'
+                    + ' CONSTRUCT {?similarityResource ies:total_value>  ?value }'
                     + ' WHERE {'
                     //+ '     SELECT DISTINCT ?o  (str(?o) as ?label)'
                     + '     SELECT DISTINCT ?temporalResource ?value  '
                     + '         WHERE {'
-                    + '             <' + silaboA + '> <http://ies.linkeddata.ec/vocabulary#has_similarity> ?temporalResource. '
-                    + '             ?temporalResource <http://ies.linkeddata.ec/vocabulary#has_similar_resource> <' + silaboB + '>. '
-                    + '             ?temporalResource <http://ies.linkeddata.ec/vocabulary#value> ?value '
+                    + '             <' + silaboA + '> <ies:has_similarity> ?similarityResource. '
+                    + '             <' + silaboB + '> <ies:has_similarity> ?similarityResource. '
+                    + '             ?similarityResource ies:total_value> ?value '
                     + '         } '
                     + ' }';
             var similitud = [];
@@ -431,12 +443,13 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
                     {
                         var model = {};
                         model["id"] = compacted["@id"];
-                        model["value"] = compacted["ies:value"]["@value"];
+                        model["value"] = compacted["ies:total_value"]["@value"];
                         similitud.push({similitudID: model["id"], similitudValue: model["value"]});
                         applyvaluesSimilitud(similitud);
                         waitingDialog.hide();
                     } else
                     {
+                        calcularSimilitud();
                         alert("No se ha recuperado información, consulte al administrador")
                         waitingDialog.hide();
                     }

@@ -35,7 +35,7 @@
 
                 <div class="col-md-5">
                     <h3 class="text-primary" style="text-align: left">{{'silabo'| translate}}:</h3>
-                    <select   class="form-control" name="groupb" id="groupb" ng-model="selectedSilaboA" ng-options="key.silaboID as (key.silaboNAME +     ' --- Creado en: ' +      key.silaboCREATION) for key in silabosFinalA| orderBy:['silaboNAME', 'silaboCREATION']" >
+                    <select   class="form-control" name="groupb" id="groupb" ng-model="selectedSilaboA" ng-options="key.silaboID as (key.silaboNAME +      ' --- Creado en: ' +       key.silaboCREATION) for key in silabosFinalA| orderBy:['silaboNAME', 'silaboCREATION']" >
                         <option value="">Seleccione</option>
                     </select>
                 </div>
@@ -63,29 +63,35 @@
 
                 <div class="col-md-5">
                     <h3 class="text-primary" style="text-align: left">{{'silabo'| translate}}:</h3>
-                    <select   class="form-control" name="groupb" id="group" ng-model="selectedSilaboB" ng-options="key.silaboID as (key.silaboNAME +     ' --- Creado en: ' +      key.silaboCREATION) for key in silabosFinalB| orderBy:['silaboNAME', 'silaboCREATION']" >
+                    <select   class="form-control" name="groupb" id="group" ng-model="selectedSilaboB" ng-options="key.silaboID as (key.silaboNAME +      ' --- Creado en: ' +       key.silaboCREATION) for key in silabosFinalB| orderBy:['silaboNAME', 'silaboCREATION']" >
                         <option value="">Seleccione</option>
                     </select>
                 </div>
             </div> <!--fin seleccionando silabo B-->
 
-            <hr>
             <div>
                 <!--mostrando silabo A-->
                 <div class="col-md-6">
-                    <sil-table data="dataA"></sil-table> 
+                    <sil-table data="dataA" label="labelA"></sil-table> 
                 </div>
                 <!-- Fin Mostrando silabo A-->
 
+                <!--mostrando silabo B-->
                 <div class="col-md-6">
-                    <sil-table data="dataB"></sil-table> 
+                    <sil-table data="dataB" label="labelB"></sil-table> 
                 </div>
                 <!-- Fin Mostrando silabo B-->
             </div>
-            <div id="scrollToValue" class="center col-md-12 text-success" style="padding-top: 30px; display: none ">
-                <h1>Similitud:  {{similitudFinal[0]["similitudValue"]}}</h1>
-            </div>
 
+        </div>
+    </div>
+
+    <div id="scrollToCalc" class="col-md-12" style="text-align: center; padding: 5%" ng-controller="calcSimilarity">
+        <div class="col-md-12">
+            <button type="button" class="btn btn-primary" ng-click="ifClick()">Calcular Similitud</button>
+        </div>
+        <div id="scrollToValue" class="col-md-12 text-success" style="display: none; padding-top: 30px; ">
+            <h1>{{similitudFinal["similitudValue"]}}</h1>
         </div>
     </div>
 </div>

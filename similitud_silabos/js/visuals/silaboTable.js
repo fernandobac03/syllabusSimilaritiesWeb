@@ -24,10 +24,15 @@ silTable.directive('silTable', ["$translate", "$routeParams", 'globalData', 'spa
          }
             });
         };
-        function crearTabla(rootElement, data) {
+        function crearTabla(label, rootElement, data) {
             rootElement.html('');
+            
+            var tituloMostrarTabla = rootElement.append("h2")
+            tituloMostrarTabla.text(label);
+            tituloMostrarTabla.attr("style", "padding: 20px");
+            
             var table = rootElement.append("table");
-            table.attr("class", "table table-striped contenido")
+            table.attr("class", "table table-striped contenido");
             //   var thead = table.append("thead");
             var tbody = table.append("tbody");
             var datos = data["data"];
@@ -45,22 +50,24 @@ silTable.directive('silTable', ["$translate", "$routeParams", 'globalData', 'spa
             });
         };
 
-        function draw(elementoRaiz, data, widthEl, heightEl, scopeEl, attrsEl) {
-            crearTabla(elementoRaiz, data);
+        function draw(label, elementoRaiz, data) {
+            crearTabla(label, elementoRaiz, data);
         };
 
         return {
             restrict: 'E',
             scope: {
-                data: '='
+                data: '=',
+                label: '=',
             },
             compile: function (element, attrs, transclude) {
                 var elementoRaiz = d3.select(element[0]);
                 return	function (scope, element, attrs) {
                     scope.$watch('data', function (newVal, oldVal, scope) {
                         var data = scope.data;
+                        var label = scope.label;
                         if (data) {
-                            draw(elementoRaiz, data, scope, attrs);
+                            draw(label, elementoRaiz, data);
 //                            var jsonld = data.data;
 //                            var schema = data.schema;
 //                            var fields = schema.fields;

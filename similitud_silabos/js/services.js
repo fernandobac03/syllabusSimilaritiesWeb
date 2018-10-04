@@ -10,7 +10,7 @@ var similitudServices = angular.module('similitudServices', ['ngResource']);
 //wkhomeServices.serverInstance = 'http://localhost:8080/marmotta';
 //for parliament triplestore test
 similitudServices.serverInstance = 'http://172.17.0.3:8089/parliament';
-similitudServices.similarityService = 'http://172.17.0.5:5000/ucuenca/syllabus/full_similarity_detected';
+similitudServices.similarityService = 'http://172.17.0.4:5000/ucuenca/syllabus/similarity/service/fulldetected';
 
 
 /* Sample of a RESTful client Service */
@@ -85,7 +85,7 @@ similitudServices.factory('clustersQuery', ['$resource', '$http', '$window',
 
 similitudServices.factory('similarityQuery', ['$resource', '$http', '$window',
     function ($resource, $http, $window) {
-        var serverInstance = similitudServices.similarityService + '/service';
+        var serverInstance = similitudServices.similarityService;
         return $resource(serverInstance, {}, {
             query: {method: 'POST', isArray: false, headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}}
         });

@@ -35,15 +35,13 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
         function similitudPrealmacenada(silaboA, silaboB) {
             waitingDialog.show("Calculando Similitud");
             var querySimilitud = globalData.PREFIX
-
-                    + ' CONSTRUCT {?temporalResource <http://ies.linkeddata.ec/vocabulary#value>  ?value }'
+                    + ' CONSTRUCT {?similarityResource ies:total_value  ?value }'
                     + ' WHERE {'
-                    //+ '     SELECT DISTINCT ?o  (str(?o) as ?label)'
                     + '     SELECT DISTINCT ?temporalResource ?value  '
                     + '         WHERE {'
-                    + '             <' + silaboA + '> <http://ies.linkeddata.ec/vocabulary#has_similarity> ?temporalResource. '
-                    + '             ?temporalResource <http://ies.linkeddata.ec/vocabulary#has_similar_resource> <' + silaboB + '>. '
-                    + '             ?temporalResource <http://ies.linkeddata.ec/vocabulary#value> ?value '
+                    + '             <' + silaboA + '> ies:has_similarity ?similarityResource. '
+                    + '             <' + silaboB + '> ies:has_similarity ?similarityResource. '
+                    + '             ?similarityResource ies:total_value ?value '
                     + '         } '
                     + ' }';
             var similitud = [];
@@ -53,7 +51,7 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
                     {
                         var model = {};
                         model["id"] = compacted["@id"];
-                        model["value"] = compacted["ies:value"]["@value"];
+                        model["value"] = compacted["ies:total_value"]["@value"];
                         similitud = {similitudID: model["id"], similitudValue: model["value"]};
 
                         applyvaluesSimilitud(similitud);
@@ -63,7 +61,10 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
                         waitingDialog.hide();
                     } else
                     {
-                        alert("No se ha recuperado información, consulte al administrador")
+                        //alert("No se ha recuperado información, consulte al administrador")
+                        //son dos silabos del repositorio, que aún no tienen precalculado su similitud.
+                        //aquí, esta similitud se calculará en el momento de la consulta.
+                        calcularSimilitud(temporalData.silaboAlmacenadoA, temporalData.silaboAlmacenadoB);
                         waitingDialog.hide();
                     }
                 });
@@ -79,33 +80,119 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
         }
         ;
 
-        function crearJsonDeContenido(silabo){
+        function crearJsonDeContenido(contenido) {
             var string_contenido = "";
-            for (var i = 0; i < silabo["silaboCHAPTER"].length; i++)
+            for (var i = 0; i < contenido.length; i++)
             {
-        //leyendo subcapitulos
-                var subcap_string = "";
-                for (var j = 1; j < silabo["silaboCHAPTER"][i].length; j++)
+                if (contenido[i][0] != "" || contenido[i][0] != " ")
                 {
-                    subcap_string = subcap_string + String.format(globalData.subcapitulos_json, j, silabo["silaboCHAPTER"][i][j]);
-                    if (j < silabo["silaboCHAPTER"][i].length - 1)
+                    //leyendo subcapitulos
+                    var subcap_string = "";
+                    for (var j = 1; j < contenido[i].length; j++)
                     {
-                        subcap_string += ",";
+                        subcap_string = subcap_string + String.format(globalData.items_template, j, contenido[i][j]);
+                        if (j < contenido[i].length - 1)
+                        {
+                            subcap_string += ",";
+                        }
                     }
-                }
-                //agregando subcapitulos a cada capitulo
-                string_contenido = string_contenido + String.format(globalData.capitulos_json, (i + 1), silabo["silaboCHAPTER"][i][0], subcap_string);
-                if (i < silabo["silaboCHAPTER"].length - 1)
-                {
-                    string_contenido += ",";
+                    //agregando subcapitulos a cada capitulo, si no tiene subcaps, solo se agrega el capitulo
+
+                    subcap_string != "" ? string_contenido = string_contenido + String.format(globalData.full_capitulos_template, (i + 1), contenido[i][0], subcap_string) :
+                            string_contenido = string_contenido + String.format(globalData.capitulos_template, (i + 1), contenido[i][0]);
+                    if (i < contenido.length - 1)
+                    {
+                        string_contenido += ",";
+                    }
                 }
             }
             return string_contenido;
         }
+        function crearJsonDeLista(listaItems) {//objetivos, resultados, etc
+            var lista = "";
+            _.each(listaItems, function (val, idx) {
+                if (val["@value"] != " " && val["@value"] != "")
+                {
+                    lista += String.format(globalData.items_template, idx, val["@value"]);
+                    if (idx < (listaItems.length - 1))
+                    {
+                        lista += ",";
+                    }
+                }
+
+            });
+            return lista;
+        }
 
         createJSON = function (silaboA, silaboB) {
-            return String.format(globalData.silabos_json, silaboA["silaboNAME"], silaboA["silaboDESCRIPCION"], crearJsonDeContenido(silaboA), silaboB["silaboNAME"], silaboB["silaboDESCRIPCION"], crearJsonDeContenido(silaboB));
+            var campos = silaboA["schema"]["fields_to_compare"];
+            silaboA = silaboA["data"];
+            silaboB = silaboB["data"];
+
+            //var jsonToSend = [];
+            //jsonToSend.push(createIndividualJSON(silaboA));
+            //jsonToSend.push(createIndividualJSON(silaboB));
+
+
+
+            return stringToJson(String.format(globalData.silabos_template, stringFieldsBuilder(campos, silaboA), stringFieldsBuilder(campos, silaboB)));
         };
+
+        function stringFieldsBuilder(campos, silabo)
+        {
+            var builderString = "";
+            _.each(campos, function (campo, idx) {
+                if (typeof(silabo[campo]) == "string")
+                {
+                    if (silabo[campo] != "" && silabo[campo] != " ")
+                    {
+                        if (builderString != "")
+                        {
+                            builderString = builderString + ",";
+                        }
+                        builderString = builderString + String.format(globalData.campos_template, campo, silabo[campo]);
+                    }
+                } 
+                else if (campo == "content")
+                {
+                    if (builderString != "")
+                    {
+                        builderString = builderString + ",";
+                    }
+                    builderString = builderString + String.format(globalData.contenido_template, crearJsonDeContenido(silabo[campo]));
+                }
+                else if (silabo[campo].length > 0)
+                {
+                    var listaString = crearJsonDeLista(silabo[campo])
+                    if (listaString != "")
+                    {
+                        if (builderString != "")
+                        {
+                            builderString = builderString + ",";
+                        }
+                        builderString = builderString + String.format(globalData.lista_template, campo, listaString);
+                    }
+                }
+
+            });
+            return builderString;
+        }
+
+        function stringToJson(jsonString)
+        {
+            jsonString = limpiarString(jsonString);
+            return JSON.parse(jsonString);
+        }
+        function limpiarString(jsonString)
+        {
+            jsonString = jsonString.replace(/\n/g, ' ');
+            jsonString = jsonString.replace(/\t/g, ' ');
+            jsonString = jsonString.replace(/[|&;$%@<>()+]/g, "");
+            return jsonString;
+        }
+
+
+
 
 //////////////////
 //Hasta quí, un ejemplo de cómo vienen los datos de cada sílabo
@@ -114,18 +201,15 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
 
         function calcularSimilitud(silaboA, silaboB) {//obtener similitud de silabos ingresados manualmente o desde excel
 
-            var jsonString = createJSON(silaboA, silaboB);
-            jsonString = jsonString.replace(/\n/g,' ');
-            jsonString = jsonString.replace(/\t/g,' ');
-            jsonString = jsonString.replace(/[|&;$%@<>()+]/g, "");
-            var jsonobject = JSON.parse(jsonString)
+            var jsonobject = createJSON(silaboA, silaboB);
             var similitud = [];
+            //similarityQuery.query(jsonobject, function (result) {
             similarityQuery.query(jsonobject, function (result) {
                 if (result)
                 {
                     var model = {}
                     model["id"] = "1";
-                    model["value"] = result["value"];
+                    model["value"] = result["value"]["total"];
                     similitud = {similitudID: model["id"], similitudValue: model["value"]};
 
                     applyvaluesSimilitud(similitud);
