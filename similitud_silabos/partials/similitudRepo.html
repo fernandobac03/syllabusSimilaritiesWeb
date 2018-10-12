@@ -2,7 +2,7 @@
 </div> 
 <hr>
 <hr>
-<div ng-controller="exportController">
+<div ng-controller="loadSyllabusA">
 
 
     <div class="col-md-12">
@@ -18,7 +18,8 @@
 
 
     <!--------Inicia acciones con silabo A--->
-    <div class="col-md-6" ng-controller="loadSyllabusA" >
+    <!--<div class="col-md-6" ng-controller="loadSyllabusA" >-->
+    <div class="col-md-6" >
         <h3 class="text-info" style="text-align: left">{{'silaboA'| translate}}:</h3>
         <div class="row" style="padding: 2%">
 
@@ -26,11 +27,11 @@
             <div class="col-md-12">
 
                 <div class="ingresar col-md-12" style="padding: 2%" >
-                    <button ng-click="searchDialog()">Buscar Sílabo...</button>
-                    <button ng-click="addDialog()">Ingresar Sílabo...</button>
+                    <button ng-click="searchDialogA()">Buscar Sílabo...</button>
+                    <button ng-click="addDialogA()" style="display: none">Ingresar Sílabo...</button>
                 </div>  
 
-                <div class="modal fade"  id="searchDialog" tabindex="-1" role="dialog" aria-labelledby="Buscador de Sílabos" aria-hidden="true">
+                <div class="modal fade"  id="searchDialogA" tabindex="-1" role="dialog" aria-labelledby="Buscador de Sílabos" aria-hidden="true">
                     <div class="modal-dialog  modal-md">
                         <div class="modal-content" style = "width: 800px; height: 500px">
                             <div class="modal-header">
@@ -55,7 +56,7 @@
                                             </tr>    
                                         </thead>
                                         <tbody>
-                                            <tr ng-repeat="silabo in silabos" ng-click="setSelectedSilabo($event, silabo)">
+                                            <tr ng-repeat="silabo in silabos| orderBy:['silaboNAME', 'silaboDEPENDENCIA']" ng-click='selectedSilaboA($event, silabo.silaboID)'>
                                                 <td style="width: 100%">
                                                     <a>
                                                         {{ silabo["silaboNAME"]}}
@@ -83,10 +84,8 @@
                     </div>
                 </div> <!--Fin Search Dialog-->
 
-
-
                 <!-- Inicia Add Dialogo, permite ingresar un silabo manualmente o cargar desde Excel-->
-                <div class="modal fade"  id="addDialog" tabindex="-1" role="dialog" aria-labelledby="Buscador de Sílabos" aria-hidden="true">
+                <div class="modal fade"  id="addDialogA" tabindex="-1" role="dialog" aria-labelledby="Buscador de Sílabos" aria-hidden="true">
                     <div class="modal-dialog  modal-md">
                         <div class="modal-content" style = "overflow: auto; width: 900px; height: 500px">
                             <div class="modal-header">
@@ -96,15 +95,18 @@
                             <div class="modal-body" >
 
                                 <div id="divloadexcel" style="padding: 1%; padding-bottom: 5%">
-                                    <div class="col-md-6" style="text-align: right">Cargar desde Excel 
+                                    <div class="col-md-2" style="text-align: right">Cargar desde Excel 
                                     </div>
-                                    <div class="col-md-6"><input type="file" id="inputExcel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+                                    <div class="col-md-6"><input type="file" id="inputExcelA" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+                                    </div>
+                                    <div  class="col-md-4">
+                                        <p>El archivo debe cumplir el formato establecio, ejemplos: <a href='resources/modeloSilabo.xlsx'>Modelo de Silabo en Excel</a> - <a href='resources/modeloTemplate.xlsx'>Plantilla del modelo</a></p>
                                     </div>
                                 </div>   
                                 <div  class="col-md-12" style="overflow: auto;">
                                     <table id="tablaLoadDataDialog" class="table table-striped " style="font-size: x-small; ">
 
-                                        <tbody id="contenidoAcademicoDeTabla">
+                                        <tbody id="contenidoAcademicoDeTablaA">
                                             <tr>
                                                 <td style="width: 10%">
                                                     Título *
@@ -147,7 +149,7 @@
                                                 </td>
                                             </tr>
 
-                                            <tr id="trcontenido">
+                                            <tr id="trcontenidoA">
                                                 <td>
                                                     Capítulo 1 *
                                                 </td>
@@ -166,11 +168,10 @@
                                         </tbody>
                                     </table>
                                 </div>
-
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-default" ng-click="seleccionarSilabo()">Cargar</button>
+                                <button type="button" class="btn btn-default" ng-click="seleccionarSilaboA()">Cargar</button>
                             </div>
                         </div>
                     </div>
@@ -178,45 +179,12 @@
             </div> 
 
 
-
-
-
-            <div>
-                <div class="col-md-2">
-                    <label>Titulo</label>
-                </div> 
-                <div class="col-md-10" >
-                    {{silabotoShow['silaboNAME']}} 
-                </div>
+            <!--mostrando silabo A-->
+            <div class="col-md-12">
+                <sil-table data="dataA" label="labelA"></sil-table> 
             </div>
+            <!-- Fin Mostrando silabo A-->
 
-            <div id="contenidoA" class="col-md-12" style="display: none" >
-                <table class="table table-striped ">
-                    <tbody>
-                        <tr>
-                            <td>Descripción</td>
-                            <td><textarea readonly class="form-control" rows="4" id="comment">{{silabotoShow['silaboDESCRIPCION']}}</textarea></td>
-                        </tr>
-                        <tr>
-                            <td>Objetivos</td>
-                            <td><div style="overflow: auto; height: 80px"><li readonly ng-repeat="objetivo in silabotoShow['silaboOBJETIVO']"> - {{objetivo['@value']}}</li></div></td>
-                        </tr>
-                        <tr>
-                            <td>Institución</td>
-                            <td>{{silabotoShow['silaboINSTITUCION']}}</td>
-                        </tr>
-                        <tr>
-                            <td>Dependencia</td>
-                            <td>{{silabotoShow['silaboDEPENDENCIA']}}</td>
-                        </tr>
-                        <tr>
-                            <td>Capítulos</td>
-                            <td><div style="overflow: auto; height: 120px"><li readonly ng-repeat="capitulo in silabotoShow['silaboCHAPTER']"> - {{capitulo[0]}}</li></div></td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
         </div> 
     </div> <!--fin Seelección de silabo A-->
 
@@ -226,7 +194,8 @@
 
 
     <!--Selección de silabo B-->
-    <div class="col-md-6" ng-controller="loadSyllabusB" >
+    <!--<div class="col-md-6" ng-controller="loadSyllabusB" >-->
+    <div class="col-md-6" >
         <h3 class="text-info" style="text-align: left">{{'silaboB'| translate}}:</h3>
         <div class="row" style="padding: 2%">
 
@@ -235,11 +204,11 @@
 
 
                 <div class="ingresar col-md-12"  style="padding: 2%">
-                    <button ng-click="searchDialog()">Buscar Sílabo...</button>
-                    <button ng-click="addDialog()">Ingresar Sílabo...</button>
+                    <button ng-click="searchDialogB()">Buscar Sílabo...</button>
+                    <button ng-click="addDialogB()"  style="display: none">Ingresar Sílabo...</button>
                 </div>  
 
-                <div class="modal fade"  id="searchDialog2" tabindex="-1" role="dialog" aria-labelledby="Buscador de Sílabos" aria-hidden="true">
+                <div class="modal fade"  id="searchDialogB" tabindex="-1" role="dialog" aria-labelledby="Buscador de Sílabos" aria-hidden="true">
                     <div class="modal-dialog  modal-md">
                         <div class="modal-content" style = "width: 800px">
                             <div class="modal-header">
@@ -258,7 +227,7 @@
                                                 <th>Institución</th>
                                         </thead>
                                         <tbody>
-                                            <tr ng-repeat="silabo in silabos" ng-click="setSelectedSilabo($event, silabo)">
+                                            <tr ng-repeat="silabo in silabos| orderBy:['silaboNAME', 'silaboDEPENDENCIA']" ng-click='selectedSilaboB($event, silabo.silaboID)'>
                                                 <td style="width: 100%">
                                                     <a>
                                                         {{ silabo["silaboNAME"]}}
@@ -288,7 +257,7 @@
 
 
                 <!-- Inicia Add Dialogo, permite ingresar un silabo manualmente o cargar desde Excel-->
-                <div class="modal fade"  id="addDialog2" tabindex="-1" role="dialog" aria-labelledby="Buscador de Sílabos" aria-hidden="true">
+                <div class="modal fade"  id="addDialogB" tabindex="-1" role="dialog" aria-labelledby="Buscador de Sílabos" aria-hidden="true">
                     <div class="modal-dialog  modal-md">
                         <div class="modal-content" style = "overflow: auto; width: 900px; height: 500px">
                             <div class="modal-header">
@@ -298,15 +267,18 @@
                             <div class="modal-body" >
 
                                 <div id="divloadexcel" style="padding: 1%; padding-bottom: 5%">
-                                    <div class="col-md-6" style="text-align: right">Cargar desde Excel 
+                                    <div class="col-md-2" style="text-align: right">Cargar desde Excel 
                                     </div>
-                                    <div class="col-md-6"><input type="file" id="inputExcel2" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+                                    <div class="col-md-6"><input type="file" id="inputExcelB" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+                                    </div>
+                                    <div  class="col-md-4">
+                                        <p>El archivo debe cumplir el formato establecio, ejemplos: <a href='resources/modeloSilabo.xlsx'>Modelo de Silabo en Excel</a> - <a href='resources/modeloTemplate.xlsx'>Plantilla del modelo</a></p>
                                     </div>
                                 </div>   
                                 <div  class="col-md-12" style="overflow: auto;">
                                     <table id="tablaLoadDataDialog2" class="table table-striped " style="font-size: x-small; ">
 
-                                        <tbody id="contenidoAcademicoDeTabla2">
+                                        <tbody id="contenidoAcademicoDeTablaB">
                                             <tr>
                                                 <td style="width: 10%">
                                                     Título *
@@ -349,7 +321,7 @@
                                                 </td>
                                             </tr>
 
-                                            <tr id="trcontenido2">
+                                            <tr id="trcontenidoB">
                                                 <td>
                                                     Capítulo 1 *
                                                 </td>
@@ -372,7 +344,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-default" ng-click="seleccionarSilabo()">Cargar</button>
+                                <button type="button" class="btn btn-default" ng-click="seleccionarSilaboB()">Cargar</button>
                             </div>
                         </div>
                     </div>
@@ -382,41 +354,11 @@
 
             </div> 
 
-            <div>
-                <div class="col-md-2">
-                    <label>Titulo</label>
-                </div> 
-                <div class="col-md-10" >
-                    {{silabotoShow['silaboNAME']}} 
-                </div>
+            <!--mostrando silabo B-->
+            <div class="col-md-12">
+                <sil-table data="dataB" label="labelB"></sil-table> 
             </div>
-            <div id="contenidoB" class="col-md-12" style="display: none;">
-                <table class="table table-striped ">
-                    <tbody>
-                        <tr>
-                            <td>Descripción</td>
-                            <td><textarea readonly class="form-control" rows="4" id="comment">{{silabotoShow['silaboDESCRIPCION']}}</textarea></td>
-                        </tr>
-                        <tr>
-                            <td>Objetivos</td>
-                            <td><div style="overflow: auto; height: 80px"><li readonly ng-repeat="objetivo in silabotoShow['silaboOBJETIVO']"> - {{objetivo["@value"]}}</li></div></td>
-                        </tr>
-                        <tr>
-                            <td>Institución</td>
-                            <td>{{silabotoShow['silaboINSTITUCION']}}</td>
-                        </tr>
-                        <tr>
-                            <td>Dependencia</td>
-                            <td>{{silabotoShow['silaboDEPENDENCIA']}}</td>
-                        </tr>
-                        <tr>
-                            <td>Capítulos</td>
-                            <td><div style="overflow: auto; height: 120px"><li readonly ng-repeat="capitulo in silabotoShow['silaboCHAPTER']"> - {{capitulo[0]}}</li></div></td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
+            <!-- Fin Mostrando silabo B-->
 
         </div>
     </div> <!--fin Acciones de silabo B-->
@@ -427,7 +369,7 @@
             <button type="button" class="btn btn-primary" ng-click="ifClick()">Calcular Similitud</button>
         </div>
         <div id="scrollToValue" class="col-md-12 text-success" style="display: none; padding-top: 30px; ">
-            <h1>{{similitudFinal["similitudValue"]}}</h1>
+            <h1>La similitud entre los sílabos es: {{similitudFinal["similitudValue"]}} %</h1>
         </div>
     </div>
 

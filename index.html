@@ -200,7 +200,7 @@
         <!--<div ng-controller="loadData"></div>-->
 
         <!-- <div class="view-container"> -->
-        <nav class="navbar navbar-inverse navbar-fixed-top" style="opacity:1; margin-bottom:0; border:0; z-index: 0;">
+        <nav class="navbar navbar-inverse navbar-fixed-top" style="opacity:1; margin-bottom:0; border:0; z-index: 0; background-color: #00b8e6">
 
 
             <!-- MENU DESPLEGABLE -->
@@ -223,8 +223,8 @@
             <!--</nav><!-- Aqui estamos cerrando la nueva etiqueta nav -->
             <!--    </div>
             -->
-            <div class="bg-primary collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="color: #FAFAFA">
-                <ul class="nav navbar-nav" ng-controller="translate">
+            <div class="bg-primary collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="background-color: #1E91F6">
+                <ul class="nav navbar-nav" ng-controller="translate" style="font-size: large; ">
 
 
 
@@ -238,6 +238,7 @@
                     <li><a style="color: #FAFAFA" ng-click="refreshLang()" href="#/{{lang}}/">{{'sources'|translate}}</a></li>
 
                 </ul>
+                    
                 <!--
                                 <ul class="nav navbar-nav navbar-right" style="padding-right:0px" ng-controller="translate">
                                     <li>
@@ -290,5 +291,7 @@
 
 
         <!--<div ng-view class="view-frame"></div> -->
+            
     </body>
+    <div style="float:bottom" class='col-md-12' ng-include="'/similitud_silabos/partials/footnote.html'"/>
 </html>

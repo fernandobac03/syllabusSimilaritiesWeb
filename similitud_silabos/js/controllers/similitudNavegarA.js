@@ -234,63 +234,11 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
             });
         }
 
-
-
-
-        //Para saber cuando el usuario seleccione la dependencia.
-        //$scope.$watch('searchText', function () {
-        //   buscarSilabo($scope.searchText);
-        //})
-
-        $scope.buscandoSilabo = function ($event, texto) {
-            //$scope.$watch('searchText', function () {
-
-
-            var institucionFilter = temporalData.selectedInstitucion ? temporalData.selectedInstitucion : "";
-            var dependenciaFilter = temporalData.selectedDependencia ? temporalData.selectedDependencia : "";
-            //var buildquery = String.format(query, $scope.searchText);
-
-            var query = String.format(globalData.querySilabos, texto);
-            $scope.silabosList = [];
-            sparqlQuery.querySrv({query: query}, function (rdf) {
-                jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
-                    if (compacted["@graph"])
-                    {
-                        _.map(compacted["@graph"], function (silb) {
-                            var model = {};
-                            //model["Publication"] = pub["foaf:publications"]["@id"];
-                            model["silabo"] = silb["@id"];
-                            model["name"] = silb["rdfs:label"]["@value"];
-                            model["dependenciaID"] = silb["ies:belonging_to"]["@id"];
-                            model["dependencia"] = silb["ies:faculty"]["@value"];
-                            model["institucionID"] = silb["ies:has_institution"]["@id"];
-                            model["institucion"] = silb["ies:institution"]["@value"];
-                            $scope.silabosList.push({silaboID: model["silabo"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboDEPENDENCIAID: model["dependenciaID"], silaboINSTITUCION: model["institucion"], silaboINSTITUCIONID: model["institucionID"]});
-                        });
-                        applyvaluesSearchSilabos();
-                        waitingDialog.hide();
-                    } else//no retrieve data
-                    {
-                        //alert("No se han recuperado datos de las dependencias");
-                        waitingDialog.hide();
-                    }
-                }); //end jsonld.compact
-            }); //end sparqlService
-        }
-        //)
-        ; //end buscarSilabo
-        function applyvaluesSearchSilabos() {
-            $scope.$apply(function () {
-                $scope.silabos = $scope.silabosList;
-            });
-        }
-
-
         function fullSilaboMapping(compacted, silaboID)
         {
             var fullSilabo = {};
-             var model = {};
-               
+            var model = {};
+
             if (compacted["@graph"])
             {
                 var contenido = [];
@@ -341,21 +289,21 @@ similitudControllers.controller('similitudNavegarA', ['$translate', '$routeParam
                 var objetivos = [];
                 objetivos.push(compacted["ies:objective"]);
                 model["objective"] = compacted["ies:objective"].length > 1 ? compacted["ies:objective"] : objetivos;
-                var capitulo = [];
-                capitulo.push("No se ha encontrado contenido académico")
-                contenido.push(capitulo)
+                //var capitulo = [];
+                //capitulo .push("No se ha encontrado contenido académico")
+                //contenido.push(capitulo)
                 model["chapter"] = contenido;
             }
-            fullSilabo = {id: model["silabo"], creacion: model["creacion"], 
-                          creditos: model["creditos"], content: model["chapter"], 
-                          objectives: model["objective"], description: model["description"], 
-                          name: model["name"], dependencia: model["dependencia"], 
-                          dependenciaID: model["dependenciaID"], institucion: model["institucion"], 
-                          institucionID: model["institucionID"]};
-            return  {schema: {fields: ["name", "description", "objectives", "content", 
-                                       "dependencia", "institucion", "creacion", "creditos"], 
-                              fields_to_compare: ["name", "description", "objectives", "content"]}, 
-                     data: fullSilabo};
+            fullSilabo = {id: model["silabo"], creacion: model["creacion"],
+                creditos: model["creditos"], content: model["chapter"],
+                objectives: model["objective"], description: model["description"],
+                name: model["name"], dependencia: model["dependencia"],
+                dependenciaID: model["dependenciaID"], institucion: model["institucion"],
+                institucionID: model["institucionID"]};
+            return  {schema: {fields: ["name", "description", "objectives", "content",
+                        "dependencia", "institucion", "creacion", "creditos"],
+                    fields_to_compare: ["name", "description", "objectives", "content"]},
+                data: fullSilabo};
         }
         function mostrarFullSilaboA(silaboID)
         {

@@ -15,16 +15,16 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
             if (temporalData.selectedSyllabusID_A == "0000") { //Silabo A: fue un silabo ingresado o cargado desde excel
                 if (temporalData.selectedSyllabusID_B == "0000") {//Silabo B: fue ingresado o cargado desde excel
                     //proceso para analizar ingresado VS ingresado   
-                    calcularSimilitud(temporalData.silaboIngresadoA, temporalData.silaboIngresadoB);
+                    calcularSimilitud(temporalData.silaboAlmacenadoA, temporalData.silaboAlmacenadoA);
                 } else//Entonces Silabo B es un sílabo almacenado en el repositorio.
                 {
                     //proceso para analizar ingresado VS almacenado   
-                    calcularSimilitud(temporalData.silaboIngresadoA, temporalData.silaboAlmacenadoB);
+                    calcularSimilitud(temporalData.silaboAlmacenadoA, temporalData.silaboAlmacenadoB);
                 }
             } else
             if (temporalData.selectedSyllabusID_B == "0000") {//Silabo B: fue ingresado o cargado desde excel
                 //proceso para analizar almacenado VS ingresado   
-                calcularSimilitud(temporalData.silaboAlmacenadoA, temporalData.silaboIngresadoB);
+                calcularSimilitud(temporalData.silaboAlmacenadoA, temporalData.silaboAlmacenadoA);
             } else
             {
                 //proceso para analizar almacenado VS almacenado   
@@ -65,7 +65,6 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
                         //son dos silabos del repositorio, que aún no tienen precalculado su similitud.
                         //aquí, esta similitud se calculará en el momento de la consulta.
                         calcularSimilitud(temporalData.silaboAlmacenadoA, temporalData.silaboAlmacenadoB);
-                        waitingDialog.hide();
                     }
                 });
             });
@@ -142,35 +141,36 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
         {
             var builderString = "";
             _.each(campos, function (campo, idx) {
-                if (typeof(silabo[campo]) == "string")
+                if (silabo[campo])
                 {
-                    if (silabo[campo] != "" && silabo[campo] != " ")
+                    if (typeof (silabo[campo]) == "string")
+                    {
+                        if (silabo[campo] != "" && silabo[campo] != " ")
+                        {
+                            if (builderString != "")
+                            {
+                                builderString = builderString + ",";
+                            }
+                            builderString = builderString + String.format(globalData.campos_template, campo, silabo[campo]);
+                        }
+                    } else if (campo == "content" && silabo[campo].length > 0)
                     {
                         if (builderString != "")
                         {
                             builderString = builderString + ",";
                         }
-                        builderString = builderString + String.format(globalData.campos_template, campo, silabo[campo]);
-                    }
-                } 
-                else if (campo == "content")
-                {
-                    if (builderString != "")
+                        builderString = builderString + String.format(globalData.contenido_template, crearJsonDeContenido(silabo[campo]));
+                    } else if (silabo[campo].length > 0)
                     {
-                        builderString = builderString + ",";
-                    }
-                    builderString = builderString + String.format(globalData.contenido_template, crearJsonDeContenido(silabo[campo]));
-                }
-                else if (silabo[campo].length > 0)
-                {
-                    var listaString = crearJsonDeLista(silabo[campo])
-                    if (listaString != "")
-                    {
-                        if (builderString != "")
+                        var listaString = crearJsonDeLista(silabo[campo])
+                        if (listaString != "")
                         {
-                            builderString = builderString + ",";
+                            if (builderString != "")
+                            {
+                                builderString = builderString + ",";
+                            }
+                            builderString = builderString + String.format(globalData.lista_template, campo, listaString);
                         }
-                        builderString = builderString + String.format(globalData.lista_template, campo, listaString);
                     }
                 }
 

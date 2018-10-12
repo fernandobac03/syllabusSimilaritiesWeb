@@ -73,24 +73,23 @@ similitudApp.service('globalData', function () {
 
     this.querySilabos = this.PREFIX
             + 'CONSTRUCT { '
-            + '                 ?silabo rdfs:label ?title. '
-            + '                 ?silabo ies:belonging_to ?dependencia. '
-            + '                 ?silabo ies:faculty ?nameDependencia. '
-            + '                 ?silabo ies:has_institution ?institucion. '
-            + '                 ?silabo ies:institution ?nameInstitucion . '
-            + '  }'
+            + '                 ?silabo aiiso:name ?nombreAsignatura. '
+            + '                 ?silabo ies:name_academic_unit ?nombreDependencia. '    
+            + '                 ?silabo ies:name_institution ?nombreInstitucion. '
+            + ' }'
             + ' WHERE { '
-            + '     SELECT DISTINCT ?silabo ?title ?dependencia ?institucion ?nameDependencia ?nameInstitucion WHERE {   '
-            + '         ?silabo      ies:belonging_to   ?dependencia. '
-            + '         ?dependencia rdfs:label         ?nameDependencia. '
-            + '         ?dependencia ies:is_faculty_of  ?institucion. '
-            + '         ?institucion rdfs:label         ?nameInstitucion. '
-            + '         ?silabo      ies:abarca         ?subject. '
-            + '         ?subject     a                  aiiso:Subject.  '
-            + '         ?subject     ies:name           ?title . '
-            + '         FILTER REGEX(str(?title), "{0}", "i") '
-            + '     } '
-            + ' } ';
+            + '         ?silabo      a aiiso:KnowledgeGrouping. '
+            + '         ?silabo      aiiso:name ?nombreAsignatura. '
+            + '       OPTIONAL { '
+            + '         ?silabo      ies:is_taught_by   ?dependencia. '
+            + '         ?dependencia aiiso:name       ?nombreDependencia. '
+            + '       } .'
+            + '       OPTIONAL { '
+            + '         ?dependencia ies:is_academic_unit_of  ?institucion. '
+            + '         ?institucion aiiso:name         ?nombreInstitucion. '
+            + '       } .'
+            + '         FILTER REGEX(str(?nombreAsignatura), "{0}", "i") '
+            + ' } LIMIT 100 ';
 
 
     this.queryFullSilabos = this.PREFIX
