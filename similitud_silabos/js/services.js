@@ -4,8 +4,8 @@
 
 var similitudServices = angular.module('similitudServices', ['ngResource']);
 
-similitudServices.serverInstance = 'http://localhost:8089/parliament';
-similitudServices.similarityService = 'http://localhost:5000/ucuenca/syllabus/similarity/service/fulldetected';
+//similitudServices.serverInstance = 'http://localhost:8089/parliament';
+//similitudServices.similarityService = 'http://localhost:5000/ucuenca/syllabus/similarity/service/fulldetected';
 
 
 /* Sample of a RESTful client Service */
@@ -44,7 +44,7 @@ similitudServices.factory('sparqlQuery', ['$resource', '$http', '$window',
             return $.param(data);
         }
         var serverInstance = similitudServices.serverInstance ? similitudServices.serverInstance :
-                'http://' + $window.location.hostname + ($window.location.port ? ':8089' : '') + '';
+                'http://' + $window.location.hostname + ':8089/parliament' 
         return $resource(serverInstance + '/sparql', {}, {
             querySrv: {method: 'POST', isArray: true, transformRequest: transform, headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
         });
@@ -53,7 +53,8 @@ similitudServices.factory('sparqlQuery', ['$resource', '$http', '$window',
 
 similitudServices.factory('similarityQuery', ['$resource', '$http', '$window',
     function ($resource, $http, $window) {
-        var serverInstance = similitudServices.similarityService;
+        var serverInstance = similitudServices.similarityService ? similitudServices.similarityService :
+               'http://' + $window.location.hostname + ':5000/ucuenca/syllabus/similarity/service/fulldetected';
         return $resource(serverInstance, {}, {
             query: {method: 'POST', isArray: false, headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}}
         });
