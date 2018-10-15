@@ -58,7 +58,7 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
                         $('html,body').animate({
                             scrollTop: $("#scrollToValue").offset().top
                         }, "slow")
-                        waitingDialog.hide();
+                        
                     } else
                     {
                         //alert("No se ha recuperado información, consulte al administrador")
@@ -66,6 +66,7 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
                         //aquí, esta similitud se calculará en el momento de la consulta.
                         calcularSimilitud(temporalData.silaboAlmacenadoA, temporalData.silaboAlmacenadoB);
                     }
+                    waitingDialog.hide();
                 });
             });
         }
@@ -216,12 +217,13 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
                     $('html,body').animate({
                         scrollTop: $("#scrollToValue").offset().top
                     }, "slow")
-                    waitingDialog.hide();
+                    
                 } else//no retrieve data
                 {
                     //alert("No se han recuperado datos de las dependencias");
-                    waitingDialog.hide();
+                    
                 }
+                waitingDialog.hide();
 
             }); //end sparqlService
 

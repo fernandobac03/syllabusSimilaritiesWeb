@@ -226,12 +226,6 @@ similitudApp.config(['$routeProvider',
                 when('/:lang/w/author/:text', {//when user search an author in textbox
                     templateUrl: '/similitud_silabos/partials/search.html',
                 }).
-                when('/:lang/w/cloud?:text', {
-                    templateUrl: '/similitud_silabos/partials/genericPageCloud.html',
-                }).
-                when('/:lang/w/clusters?:text', {
-                    templateUrl: '/similitud_silabos/partials/clustersCloud.html',
-                }).
                 when('/:lang/data/statistics', {
                     templateUrl: '/similitud_silabos/partials/statistics.html',
                 }).
@@ -239,23 +233,8 @@ similitudApp.config(['$routeProvider',
                     templateUrl: '/similitud_silabos/partials/geoplain.html',
                     controller: 'worldPath'
                 }).
-                when('/:lang/tags/cloud', {
-                    templateUrl: '/similitud_silabos/partials/keywordsCloud.html',
-                }).
-                when('/:lang/d3/:geoId.json', {
-                    templateUrl: '/similitud_silabos/partials/phone-detail.html',
-                }).
-                when('/:lang/cloud/group-by', {
-                    templateUrl: '/similitud_silabos/partials/groupbyCloud.html',
-                }).
                 when('/:lang/geo-views/sources', {
                     templateUrl: '/similitud_silabos/partials/map.html',
-                }).
-                when('/:lang/cloud/clusters', {
-                    templateUrl: '/similitud_silabos/partials/clusterGroupByCloud.html',
-                }).
-                when('/:lang/cloud/keywords', {
-                    templateUrl: '/similitud_silabos/partials/clusterKeywordsCloud.html',
                 }).
                 when('/:lang/info/about', {
                     templateUrl: '/similitud_silabos/partials/about.html'
@@ -269,17 +248,12 @@ similitudApp.config(['$routeProvider',
                 when('/:lang/info/sources', {
                     templateUrl: '/similitud_silabos/partials/sources.html'
                 }).
-                when('/:lang/cepraxi/similitud', {
-                    templateUrl: '/similitud_silabos/partials/similitudRepo.html'
+                when('/:lang/silabo/similitud', {
+                    templateUrl: '/similitud_silabos/partials/similitudBuscar.html'
                 }).
-                when('/:lang/cepraxi/navegar', {
+                when('/:lang/silabo/navegar', {
                     templateUrl: '/similitud_silabos/partials/similitudNavegar.html'
                 }).
-//                .
-                /*when('/phones/:phoneId', {
-                 templateUrl: 'partials/phone-detail.html',
-                 controller: 'PhoneDetailCtrl'
-                 }).*/
                 otherwise({
                     redirectTo: '/es/'
                 })
