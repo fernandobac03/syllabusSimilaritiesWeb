@@ -16,6 +16,10 @@ similitudControllers.controller('similitudBuscar', ['$translate', '$routeParams'
             var silabosList = [];
             sparqlQuery.querySrv({query: query}, function (rdf) {
                 jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
+                //nquads, {format: 'application/n-quads'}
+                //var doc =  jsonld.fromRDF(rdf, {format: 'application/n-quads'});
+                
+                //jsonld.fromRDF(rdf, function (err, compacted) {
                     if (compacted["@graph"])
                     {
                         _.map(compacted["@graph"], function (silb) {

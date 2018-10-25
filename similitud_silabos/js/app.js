@@ -78,18 +78,22 @@ similitudApp.service('globalData', function () {
             + '                 ?silabo ies:name_institution ?nombreInstitucion. '
             + ' }'
             + ' WHERE { '
-            + '         ?silabo      a aiiso:KnowledgeGrouping. '
-            + '         ?silabo      aiiso:name ?nombreAsignatura. '
+            + ' SELECT (sample(?silaboTemp) as ?silabo) ?nombreAsignatura (max(?nombreDependenciaTemp) as ?nombreDependencia) '
+            + '                                      (max(?nombreInstitucionTemp) as ?nombreInstitucion)'
+            + ' WHERE { '
+            + '         ?silaboTemp      a aiiso:KnowledgeGrouping. '
+            + '         ?silaboTemp      aiiso:name ?nombreAsignatura. '
             + '       OPTIONAL { '
-            + '         ?silabo      ies:is_taught_by   ?dependencia. '
-            + '         ?dependencia aiiso:name       ?nombreDependencia. '
+            + '         ?silaboTemp      ies:is_taught_by   ?dependencia. '
+            + '         ?dependencia aiiso:name       ?nombreDependenciaTemp. '
             + '       } .'
             + '       OPTIONAL { '
             + '         ?dependencia ies:is_academic_unit_of  ?institucion. '
-            + '         ?institucion aiiso:name         ?nombreInstitucion. '
+            + '         ?institucion aiiso:name         ?nombreInstitucionTemp. '
             + '       } .'
             + '         FILTER REGEX(str(?nombreAsignatura), "{0}", "i") '
-            + ' } LIMIT 100 ';
+            + ' } group by ?nombreAsignatura LIMIT 100 '
+            + ' } ';
 
 
     this.queryFullSilabos = this.PREFIX
@@ -153,18 +157,19 @@ similitudApp.service('globalData', function () {
                     + '    WHERE { '
                     + '         <{0}> ies:has_academic_unit ?dependencias .'
                     + '         ?dependencias aiiso:name ?nameDependencias .'
-                    + '      }'
+                    + '      } limit 500'
                     + ' } ';
      this.queryLoadSilabos = this.PREFIX
             + 'CONSTRUCT { ?silabo aiiso:name ?name . ' 
             + '            ?silabo ies:date_creation ?date_creation}'
                     + ' WHERE { '
-                    + '     SELECT DISTINCT ?silabo ?name ?date_creation WHERE {  '
-                    + '         ?silabo ies:is_taught_by <{0}>.  '
+                    + '     SELECT DISTINCT (max(?silaboTemp) as ?silabo) ?name (max(?date_creationTemp) as ?date_creation) WHERE {  '
+                    + '         ?silaboTemp ies:is_taught_by <{0}>.  '
+                    + '         ?silaboTemp aiiso:description ?description.'
                     + '         <{0}> ies:is_academic_unit_of <{1}>. '
-                    + '         ?silabo aiiso:name ?name . '
-                    + '         ?silabo ies:date_creation ?date_creation '
-                    + '     } '
+                    + '         ?silaboTemp aiiso:name ?name . '
+                    + '         ?silaboTemp ies:date_creation ?date_creationTemp '
+                    + '     } group by ?name limit 1000'
                     + ' } ';
 
     

@@ -1,0 +1,7 @@
+pull from: docker pull ontotext/graphdb
+
+run:  docker run -d -p 8080:7200 -v graphdbvol:/opt/graphdb/home --name graphdb  ontotext/graphdb:tag
+
+reemplazar el archivo del contenedor "graphdb/conf/graphdb.properties" por el modificado "graphdb.properties" con la directiva CORS. Esto con el comando -> docker cp
+
+el script "runWithDocker.sh" ejecuta lo anterior"

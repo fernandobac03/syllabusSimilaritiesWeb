@@ -4,8 +4,17 @@
 
 var similitudServices = angular.module('similitudServices', ['ngResource']);
 
-//similitudServices.serverInstance = 'http://localhost:8089/parliament';
-//similitudServices.similarityService = 'http://localhost:5000/ucuenca/syllabus/similarity/service/fulldetected';
+//parliament
+//similitudServices.serverInstance = 'http://localhost:8089/parliament/sparql';
+//marmotta
+//similitudServices.serverInstance = 'http://localhost:8080/marmotta/sparql/select';
+//allegro graph
+//no soporta ld+json
+//graphdb free-version
+//similitudServices.serverInstance = 'http://localhost:8080/repositories/silabosEC';
+
+
+//similitudServices.similarityService = 'http://201.159.223.25:5000/ucuenca/syllabus/similarity/service/fulldetected';
 
 
 /* Sample of a RESTful client Service */
@@ -44,8 +53,8 @@ similitudServices.factory('sparqlQuery', ['$resource', '$http', '$window',
             return $.param(data);
         }
         var serverInstance = similitudServices.serverInstance ? similitudServices.serverInstance :
-                'http://' + $window.location.hostname + ':8089/parliament' 
-        return $resource(serverInstance + '/sparql', {}, {
+                'http://' + $window.location.hostname + ':8080/repositories/silabosEC' 
+        return $resource(serverInstance , {}, {
             querySrv: {method: 'POST', isArray: true, transformRequest: transform, headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
         });
     }]);
