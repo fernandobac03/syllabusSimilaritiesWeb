@@ -1,6 +1,9 @@
-pull from: docker pull ontotext/graphdb
 
-run:  docker run -d -p 8080:7200 -v graphdbvol:/opt/graphdb/home --name graphdb  ontotext/graphdb:tag
+Crear la imagen con el script buildFromDocker.sh, este archivo configura la cantidad de memoria, el puerto y el comendo de ejecucion de graphdb
+
+graphdb puede ejecutarse en modo standalone (server mode only ), agredando el comando "-s" en CMD del Dockerfile  y workbench (web app ).
+
+ docker run -d -p 8080:7200 -v graphdbvol:/opt/graphdb/home --name graphdb  graphdb-free
 
 reemplazar el archivo del contenedor "graphdb/conf/graphdb.properties" por el modificado "graphdb.properties" con la directiva CORS. Esto con el comando -> docker cp
 
