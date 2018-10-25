@@ -1,7 +1,13 @@
 
 Crear la imagen con el script buildFromDocker.sh, este archivo configura la cantidad de memoria, el puerto y el comendo de ejecucion de graphdb
 
+
 graphdb puede ejecutarse en modo standalone (server mode only ), agredando el comando "-s" en CMD del Dockerfile  y workbench (web app ).
+
+(En repositorio cedia, ejecutado en modo servidor). 
+
+Para conectar desde graphdb workbench en equipo local.
+ 
 
  docker run -d -p 8080:7200 -v graphdbvol:/opt/graphdb/home --name graphdb  graphdb-free
 
