@@ -13,8 +13,10 @@ myApp.labels_es = {
 
 // MAIN PAGE
 "home":"Inicio",
-"about":"Nosotros",
+"about":"Información General",
 "help":"Ayuda",
+"information":"Información",
+
 "contact":"Contacto",
 "Search":"Buscar",
 "sources": "Fuentes de Información",
@@ -55,7 +57,7 @@ myApp.labels_es = {
 
 
 ,"silabo": "Seleccione el sílabo"
-,"buscarSilabo": "Buscar sílabo - ejm: 'Redes de Computadores', 'Ingeniería de software', etc"
+,"buscarSilabo": "Buscar sílabo - ejm: 'Base de datos', 'Ingeniería de software', etc"
 ,"creacion": "Fecha de creación"
 , "creditos": "Créditos"
 , "content": "Contenido Académico"
