@@ -234,15 +234,14 @@ similitudApp.config(['$routeProvider',
                 when('/:lang/data/statistics', {
                     templateUrl: '/similitud_silabos/partials/statistics.html',
                 }).
-                when('/:lang/b/', {
-                    templateUrl: '/similitud_silabos/partials/geoplain.html',
-                    controller: 'worldPath'
-                }).
-                when('/:lang/geo-views/sources', {
-                    templateUrl: '/similitud_silabos/partials/map.html',
-                }).
                 when('/:lang/info/about', {
                     templateUrl: '/similitud_silabos/partials/about.html'
+                }).
+                when('/:lang/data/ontology', {
+                    templateUrl: '/similitud_silabos/partials/ontology.html'
+                }).
+                when('/:lang/data/endpoint', {
+                    templateUrl: '/similitud_silabos/partials/endpoint.html'
                 }).
                 when('/:lang/info/help', {
                     templateUrl: '/similitud_silabos/partials/help.html'

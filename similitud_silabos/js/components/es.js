@@ -16,6 +16,8 @@ myApp.labels_es = {
 "about":"Información General",
 "help":"Ayuda",
 "information":"Información",
+"ontology": "Modelo de Datos",
+"endpoint": "SPARQL Endpoint",
 
 "contact":"Contacto",
 "Search":"Buscar",
