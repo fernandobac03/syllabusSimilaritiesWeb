@@ -12,6 +12,9 @@ var similitudServices = angular.module('similitudServices', ['ngResource']);
 //no soporta ld+json
 //graphdb free-version
 //similitudServices.serverInstance = 'http://localhost:8080/repositories/silabosEC';
+//local graphdb
+similitudServices.serverInstance = 'http://201.159.223.25:8080/repositories/silabosEC';
+
 
 
 //similitudServices.similarityService = 'http://201.159.223.25:5000/ucuenca/syllabus/similarity/service/fulldetected';

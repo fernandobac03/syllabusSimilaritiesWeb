@@ -1,6 +1,10 @@
 
 similitudControllers.controller('similitudBuscar', ['$translate', '$routeParams', '$scope', 'temporalData', 'globalData', 'sparqlQuery', 'searchData', '$route', '$window',
     function ($translate, $routeParams, $scope, temporalData, globalData, sparqlQuery, searchData, $route, $window) {
+        //se colocan en null los indicadores de selección de silabos
+        temporalData.selectedSyllabusID_A = null;
+        temporalData.selectedSyllabusID_B= null;
+        
         $translate.use($routeParams.lang);
         $scope.themes = [];
 

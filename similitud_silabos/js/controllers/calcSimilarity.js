@@ -58,7 +58,7 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
                         $('html,body').animate({
                             scrollTop: $("#scrollToValue").offset().top
                         }, "slow")
-                        
+
                     } else
                     {
                         //alert("No se ha recuperado información, consulte al administrador")
@@ -90,6 +90,7 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
                     var subcap_string = "";
                     for (var j = 1; j < contenido[i].length; j++)
                     {
+                        contenido[i][j] = limpiarString(contenido[i][j]);
                         subcap_string = subcap_string + String.format(globalData.items_template, j, contenido[i][j]);
                         if (j < contenido[i].length - 1)
                         {
@@ -97,7 +98,7 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
                         }
                     }
                     //agregando subcapitulos a cada capitulo, si no tiene subcaps, solo se agrega el capitulo
-
+                    contenido[i][0] = limpiarString(contenido[i][0]);
                     subcap_string != "" ? string_contenido = string_contenido + String.format(globalData.full_capitulos_template, (i + 1), contenido[i][0], subcap_string) :
                             string_contenido = string_contenido + String.format(globalData.capitulos_template, (i + 1), contenido[i][0]);
                     if (i < contenido.length - 1)
@@ -113,6 +114,7 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
             _.each(listaItems, function (val, idx) {
                 if (val["@value"] != " " && val["@value"] != "")
                 {
+                    val["@value"] = limpiarString(val["@value"]);
                     lista += String.format(globalData.items_template, idx, val["@value"]);
                     if (idx < (listaItems.length - 1))
                     {
@@ -146,6 +148,7 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
                 {
                     if (typeof (silabo[campo]) == "string")
                     {
+                        silabo[campo] = limpiarString(silabo[campo]);//eliminando comas y comillas antes de crear el JSON
                         if (silabo[campo] != "" && silabo[campo] != " ")
                         {
                             if (builderString != "")
@@ -181,17 +184,23 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
 
         function stringToJson(jsonString)
         {
-            jsonString = limpiarString(jsonString);
+            jsonString = limpiarJsonString(jsonString);
             return JSON.parse(jsonString);
         }
-        function limpiarString(jsonString)
+        function limpiarJsonString(jsonString)
         {
             jsonString = jsonString.replace(/\n/g, ' ');
             jsonString = jsonString.replace(/\t/g, ' ');
             jsonString = jsonString.replace(/[|&;$%@<>()+]/g, "");
             return jsonString;
         }
-
+        function limpiarString(textString)
+        {
+            textString = textString.replace(/[,´"']/g, "");
+            textString = textString.replace(/[0-9]/g, '');   //eliminando números
+            textString = textString.replace(/\//g, ' ');
+            return textString;
+        }
 
 
 
@@ -217,18 +226,15 @@ similitudControllers.controller('calcSimilarity', ['$translate', '$routeParams',
                     $('html,body').animate({
                         scrollTop: $("#scrollToValue").offset().top
                     }, "slow")
-                    
+
                 } else//no retrieve data
                 {
                     //alert("No se han recuperado datos de las dependencias");
-                    
+
                 }
                 waitingDialog.hide();
 
             }); //end sparqlService
-
-
-
         }
         ; //Fin 
 

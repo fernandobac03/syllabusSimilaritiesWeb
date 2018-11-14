@@ -73,7 +73,9 @@ add browser prefixes**/
 transform: scale(1.5);    
 position:relative;      
 z-index:100;  
+    cursor: pointer;
 }
+
 
 /**To keep upscaled images visible on mobile, 
 increase left & right margins a bit**/  

@@ -1,7 +1,11 @@
 
 similitudControllers.controller('similitudNavegar', ['$translate', '$routeParams', '$scope', 'temporalData', 'globalData', 'sparqlQuery', 'searchData', '$route', '$window',
     function ($translate, $routeParams, $scope, temporalData, globalData, sparqlQuery, searchData, $route, $window) {
-
+        
+        //se colocan en null los indicadores de selección de silabos
+        temporalData.selectedSyllabusID_A = null;
+        temporalData.selectedSyllabusID_B= null;
+        
         $translate.use($routeParams.lang);
         $scope.if_B = function ()
         {
@@ -37,7 +41,7 @@ similitudControllers.controller('similitudNavegar', ['$translate', '$routeParams
                             model["name"] = silb["aiiso:name"]["@value"];
                             $scope.institutions.push({instID: model["id"], instNAME: model["name"]});
                         });
-                        applyvalues();
+                        applyvaluesInstitutions();
                         waitingDialog.hide();
                     } else
                     { //unicamente si no existe ninguna institucion en el repositorio, no debería pasar
@@ -120,16 +124,21 @@ similitudControllers.controller('similitudNavegar', ['$translate', '$routeParams
             var listadodependencias = [];
             sparqlQuery.querySrv({query: queryDependencias}, function (rdf) {
                 jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
+                    waitingDialog.hide();
                     if (compacted["@graph"])
                     {
                         listadodependencias = loadDependenciasMapping(compacted)
                         applyvaluesDependenciasA(listadodependencias);
-                        waitingDialog.hide();
-                    } else//no retrieve data
-                    {
-                        //alert("No se han recuperado datos de las dependencias");
-                        waitingDialog.hide();
+                    } else// se ha recuperado una dependencia
+                    if (compacted["@id"]) {
+                        listadodependencias = loadDependenciasMapping({"@graph": [compacted]})
+                        applyvaluesDependenciasA(listadodependencias);
                     }
+                    else // no se ha recuperado ninguna dependencia
+                    {
+                                                
+                    }
+                    
                 }); //end jsonld.compact
             }); //end sparqlService
 
@@ -142,15 +151,19 @@ similitudControllers.controller('similitudNavegar', ['$translate', '$routeParams
             var listadodependencias = [];
             sparqlQuery.querySrv({query: queryDependencias}, function (rdf) {
                 jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
+                    waitingDialog.hide();
                     if (compacted["@graph"])
                     {
                         listadodependencias = loadDependenciasMapping(compacted)
                         applyvaluesDependenciasB(listadodependencias);
-                        waitingDialog.hide();
-                    } else//no retrieve data
+                    } else// se ha recuperado una dependencia
+                    if (compacted["@id"]) {
+                        listadodependencias = loadDependenciasMapping({"@graph": [compacted]})
+                        applyvaluesDependenciasB(listadodependencias);
+                    }
+                    else // no se ha recuperado ninguna dependencia
                     {
-                        //alert("No se han recuperado datos de las dependencias");
-                        waitingDialog.hide();
+                                                
                     }
                 }); //end jsonld.compact
             }); //end sparqlService

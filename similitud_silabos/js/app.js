@@ -15,8 +15,8 @@ var similitudApp = angular.module('similitudApp', [
 
 
 similitudApp.service('temporalData', function () {
-    this.selectedSyllabusID_A = "";
-    this.selectedSyllabusID_B = "";
+    this.selectedSyllabusID_A = null;
+    this.selectedSyllabusID_B = null;
 
     this.selectedDependenciaA = "";
     this.selectedDependenciaB = "";
