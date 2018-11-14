@@ -8,21 +8,12 @@ similitudControllers.controller('similitudBuscar', ['$translate', '$routeParams'
         $scope.themes = [];
 
         $scope.buscandoSilabo = function ($event, texto) {
-            //$scope.$watch('searchText', function () {
-
-
-            var institucionFilter = temporalData.selectedInstitucion ? temporalData.selectedInstitucion : "";
-            var dependenciaFilter = temporalData.selectedDependencia ? temporalData.selectedDependencia : "";
-            //var buildquery = String.format(query, $scope.searchText);
 
             var query = String.format(globalData.querySilabos, texto);
             var silabosList = [];
             sparqlQuery.querySrv({query: query}, function (rdf) {
                 jsonld.compact(rdf, globalData.CONTEXT, function (err, compacted) {
-                //nquads, {format: 'application/n-quads'}
-                //var doc =  jsonld.fromRDF(rdf, {format: 'application/n-quads'});
-                
-                //jsonld.fromRDF(rdf, function (err, compacted) {
+
                     if (compacted["@graph"])
                     {
                         _.map(compacted["@graph"], function (silb) {
@@ -31,7 +22,7 @@ similitudControllers.controller('similitudBuscar', ['$translate', '$routeParams'
                             model["silabo"] = silb["@id"];
                             model["name"] = silb["aiiso:name"]["@value"];
                             model["dependencia"] = silb["ies:name_academic_unit"]["@value"];
-                            model["institucion"] = silb["ies:name_institution"]["@value"];
+                            silb["ies:name_institution"] ? model["institucion"] = silb["ies:name_institution"]["@value"] : model["institucion"] = "No Data";
                             silabosList.push({silaboID: model["silabo"], silaboNAME: model["name"], silaboDEPENDENCIA: model["dependencia"], silaboINSTITUCION: model["institucion"]});
                         });
                         //applyvaluesSearchSilabos(silabosList);

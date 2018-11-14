@@ -27,7 +27,7 @@ similitudApp.service('temporalData', function () {
     this.silaboAlmacenadoB = [];
     this.silaboIngresadoA = [];
     this.silaboIngresadoB = [];
-    
+
 
 });
 similitudApp.service('searchData', function () {
@@ -43,20 +43,12 @@ similitudApp.service('searchData', function () {
 
 similitudApp.service('globalData', function () {
     this.language = "es";
-    this.centralGraph = "http://ucuenca.edu.ec/wkhuska";
-    this.clustersGraph = "http://ucuenca.edu.ec/wkhuska/clusters";
-    this.authorsGraph = "http://ucuenca.edu.ec/wkhuska/authors";
-    this.endpointsGraph = "http://ucuenca.edu.ec/wkhuska/endpoints";
-    this.externalAuthorsGraph = "http://ucuenca.edu.ec/wkhuska/externalauthors";
     this.translateData = null;
 
     this.CONTEXT = {
-        "uc": "http://ucuenca.edu.ec/ontology#",
         "foaf": "http://xmlns.com/foaf/0.1/",
         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
         "bibo": "http://purl.org/ontology/bibo/",
-        "dc": "http://purl.org/dc/elements/1.1/",
-        "dct": "http://purl.org/dc/terms/",
         "ies": "http://ies.linkeddata.ec/syllabusOntology/vocabulary#",
         "aiiso": "http://purl.org/vocab/aiiso/schema#",
     };
@@ -64,17 +56,14 @@ similitudApp.service('globalData', function () {
 
     this.PREFIX = ' PREFIX bibo: <http://purl.org/ontology/bibo/>'
             + ' PREFIX foaf: <http://xmlns.com/foaf/0.1/>  '
-            + ' PREFIX dct: <http://purl.org/dc/terms/> '
             + ' PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> '
-            + ' PREFIX uc: <http://ucuenca.edu.ec/ontology#>  '
-            + ' PREFIX mm: <http://marmotta.apache.org/vocabulary/sparql-functions#> '
             + ' PREFIX ies: <http://ies.linkeddata.ec/syllabusOntology/vocabulary#> '
-            + ' PREFIX aiiso: <http://purl.org/vocab/aiiso/schema#> ' ;
+            + ' PREFIX aiiso: <http://purl.org/vocab/aiiso/schema#> ';
 
     this.querySilabos = this.PREFIX
             + 'CONSTRUCT { '
             + '                 ?silabo aiiso:name ?nombreAsignatura. '
-            + '                 ?silabo ies:name_academic_unit ?nombreDependencia. '    
+            + '                 ?silabo ies:name_academic_unit ?nombreDependencia. '
             + '                 ?silabo ies:name_institution ?nombreInstitucion. '
             + ' }'
             + ' WHERE { '
@@ -83,17 +72,17 @@ similitudApp.service('globalData', function () {
             + ' WHERE { '
             + '         ?silaboTemp      a aiiso:KnowledgeGrouping. '
             + '         ?silaboTemp      aiiso:name ?nombreAsignatura. '
-            + '       OPTIONAL { '
+            + '         ?silaboTemp      aiiso:description ?descripcion.'    
             + '         ?silaboTemp      ies:is_taught_by   ?dependencia. '
             + '         ?dependencia aiiso:name       ?nombreDependenciaTemp. '
-            + '       } .'
-            + '       OPTIONAL { '
             + '         ?dependencia ies:is_academic_unit_of  ?institucion. '
             + '         ?institucion aiiso:name         ?nombreInstitucionTemp. '
-            + '       } .'
-            + '         FILTER REGEX(str(?nombreAsignatura), "{0}", "i") '
-            + ' } group by ?nombreAsignatura LIMIT 100 '
-            + ' } ';
+            + '       FILTER REGEX(concat(str(?nombreAsignatura), '
+            + '         str(?nombreInstitucionTemp), '
+//            + '         str(?descripcion), '
+            + '         str(?nombreDependenciaTemp)), "{0}", "i") '
+            + ' } group by ?nombreAsignatura LIMIT 50 '
+            + ' }';
 
 
     this.queryFullSilabos = this.PREFIX
@@ -109,7 +98,7 @@ similitudApp.service('globalData', function () {
             + '                 <{0}> ies:date_creation ?fechaCreacion . '
             + '                 <{0}> ies:credits ?creditos .'
             + '                 ?capitulos ies:chapter ?nombreCapitulo. '
-            + '                 ?capitulos ies:subchapter ?nombreSubcapitulo ' 
+            + '                 ?capitulos ies:subchapter ?nombreSubcapitulo '
             + ' }'
             + ' WHERE { '
             + '     SELECT DISTINCT ?nombreCapitulo ?nombreSubcapitulo ?capitulos '
@@ -140,7 +129,7 @@ similitudApp.service('globalData', function () {
             + '         ?contenido  ies:has_chapter ?capitulos. '
             + '         ?capitulos aiiso:name ?nombreCapitulo.  '
             + '         ?capitulos ies:has_subchapter ?subcap. '
-            + '         ?subcap aiiso:name ?nombreSubcapitulo. '   
+            + '         ?subcap aiiso:name ?nombreSubcapitulo. '
             + '       } .'
             + '       OPTIONAL { '
             + '             <{0}> ies:has_objective ?objetivos.'
@@ -149,33 +138,33 @@ similitudApp.service('globalData', function () {
             + '         }. '
             + '     } '
             + ' } ';
-    
-    this.queryDependencias = this.PREFIX
-         + 'CONSTRUCT { ?dependencias aiiso:name  ?nameDependencias }'
-                    + ' WHERE { '
-                    + '    SELECT DISTINCT ?dependencias  ?nameDependencias'
-                    + '    WHERE { '
-                    + '         <{0}> ies:has_academic_unit ?dependencias .'
-                    + '         ?dependencias aiiso:name ?nameDependencias .'
-                    + '      } limit 500'
-                    + ' } ';
-     this.queryLoadSilabos = this.PREFIX
-            + 'CONSTRUCT { ?silabo aiiso:name ?name . ' 
-            + '            ?silabo ies:date_creation ?date_creation}'
-                    + ' WHERE { '
-                    + '     SELECT DISTINCT (max(?silaboTemp) as ?silabo) ?name (max(?date_creationTemp) as ?date_creation) WHERE {  '
-                    + '         ?silaboTemp ies:is_taught_by <{0}>.  '
-                    + '         ?silaboTemp aiiso:description ?description.'
-                    + '         <{0}> ies:is_academic_unit_of <{1}>. '
-                    + '         ?silaboTemp aiiso:name ?name . '
-                    + '         ?silaboTemp ies:date_creation ?date_creationTemp '
-                    + '     } group by ?name limit 1000'
-                    + ' } ';
 
-    
-    this.silabos_template =''
-            +'['
-            +'   {'
+    this.queryDependencias = this.PREFIX
+            + 'CONSTRUCT { ?dependencias aiiso:name  ?nameDependencias }'
+            + ' WHERE { '
+            + '    SELECT DISTINCT ?dependencias  ?nameDependencias'
+            + '    WHERE { '
+            + '         <{0}> ies:has_academic_unit ?dependencias .'
+            + '         ?dependencias aiiso:name ?nameDependencias .'
+            + '      } limit 500'
+            + ' } ';
+    this.queryLoadSilabos = this.PREFIX
+            + 'CONSTRUCT { ?silabo aiiso:name ?name . '
+            + '            ?silabo ies:date_creation ?date_creation}'
+            + ' WHERE { '
+            + '     SELECT DISTINCT (max(?silaboTemp) as ?silabo) ?name (max(?date_creationTemp) as ?date_creation) WHERE {  '
+            + '         ?silaboTemp ies:is_taught_by <{0}>.  '
+            + '         ?silaboTemp aiiso:description ?description.'
+            + '         <{0}> ies:is_academic_unit_of <{1}>. '
+            + '         ?silaboTemp aiiso:name ?name . '
+            + '         ?silaboTemp ies:date_creation ?date_creationTemp '
+            + '     } group by ?name limit 1000'
+            + ' } ';
+
+
+    this.silabos_template = ''
+            + '['
+            + '   {'
             + '    "id":1,'
             + '     {0} '
             + '  },'
@@ -187,13 +176,13 @@ similitudApp.service('globalData', function () {
 
     this.campos_template = '"{0}":"{1}"';
     this.lista_template = '"{0}": [ '
-                                  +    '  {1} ' 
-                                  +    ']';
-    this.contenido_template = '"content":   [ ' 
-                                    + '    {0} ' 
-                                    + ' ] ';
+            + '  {1} '
+            + ']';
+    this.contenido_template = '"content":   [ '
+            + '    {0} '
+            + ' ] ';
     this.full_capitulos_template = ''
-            +'{'
+            + '{'
             + '  "id":{0},'
             + '  "title":"{1}",'
             + '  "subchapter":['
@@ -201,13 +190,13 @@ similitudApp.service('globalData', function () {
             + '   ]'
             + '}';
     this.capitulos_template = ''
-            +'{'
+            + '{'
             + '  "id":{0},'
             + '  "title":"{1}"'
             + '}';
-    
+
     this.items_template = ''
-            +'{'
+            + '{'
             + '  "id":{0},'
             + '  "desc":"{1}"'
             + '}';
